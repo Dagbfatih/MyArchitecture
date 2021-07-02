@@ -20,7 +20,6 @@ namespace Core.DependencyResolvers
             serviceCollection.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             serviceCollection.AddSingleton<ICacheManager, MemoryCacheManager>();
             serviceCollection.AddSingleton<Stopwatch>();
-            serviceCollection.AddSingleton<ErrorDetails>();
             serviceCollection.AddSingleton<IErrorDetails, DefaultErrorDetails>();
         }
     }
