@@ -1,12 +1,19 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Transaction;
+using Core.Aspects.Autofac.Validation;
+using Core.Business;
 using Core.Entities.Concrete;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
 using Core.Utilities.Security.Hashing;
 using Core.Utilities.Security.JWT;
+using Entities.Concrete;
 using Entities.Dtos;
+using System;
 using System.Linq;
+using System.Transactions;
 
 namespace Business.Concrete
 {
@@ -14,15 +21,24 @@ namespace Business.Concrete
     {
         private IUserService _userService;
         private ITokenHelper _tokenHelper;
+        private ICustomerService _customerService;
 
-        public AuthManager(IUserService userService, ITokenHelper tokenHelper)
+        public AuthManager(IUserService userService, ITokenHelper tokenHelper, ICustomerService customerService)
         {
             _userService = userService;
             _tokenHelper = tokenHelper;
+            _customerService = customerService;
         }
 
+        [ValidationAspect(typeof(AuthRegisterValidator))]
         public IDataResult<User> Register(UserForRegisterDto userForRegisterDto, string password)
         {
+            var result = BusinessRules.Run(UserExists(userForRegisterDto.Email));
+            if (result != null)
+            {
+                return new ErrorDataResult<User>(result.Message);
+            }
+
             byte[] passwordHash, passwordSalt;
             HashingHelper.CreatePasswordHash(password, out passwordHash, out passwordSalt);
             var user = new User
@@ -56,7 +72,8 @@ namespace Business.Concrete
 
         public IResult UserExists(string email)
         {
-            if (_userService.GetByMail(email) != null)
+            var result = _userService.GetByMail(email);
+            if (result.Data != null)
             {
                 return new ErrorResult(Messages.UserAlreadyExists);
             }
@@ -68,6 +85,38 @@ namespace Business.Concrete
             var claims = _userService.GetClaims(user);
             var accessToken = _tokenHelper.CreateToken(user, claims);
             return new SuccessDataResult<AccessToken>(accessToken, Messages.AccessTokenCreated);
+        }
+
+        [TransactionScopeAspect]
+        public IDataResult<User> RegisterWithCustomer(UserForRegisterDto userForRegisterDto, string password, Customer customer)
+        {
+            var result = BusinessRules.Run(UserExists(userForRegisterDto.Email));
+            if (result != null)
+            {
+                return new ErrorDataResult<User>(result.Message);
+            }
+
+            byte[] passwordHash, passwordSalt;
+            HashingHelper.CreatePasswordHash(password, out passwordHash, out passwordSalt);
+            var user = new User
+            {
+                Email = userForRegisterDto.Email,
+                FirstName = userForRegisterDto.FirstName,
+                LastName = userForRegisterDto.LastName,
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
+                Status = true
+            };
+            var userId=_userService.AddWithId(user);
+
+            customer.UserId = userId;
+            var customerAddResult=_customerService.Add(customer);
+            if (!customerAddResult.Success)
+            {
+                throw new TransactionException(customerAddResult.Message);
+            }
+
+            return new SuccessDataResult<User>(user, Messages.UserRegistered);
         }
     }
 }

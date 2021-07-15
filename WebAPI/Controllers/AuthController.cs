@@ -1,4 +1,6 @@
 ﻿using Business.Abstract;
+using Core.Entities.Concrete;
+using Entities.Concrete;
 using Entities.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -40,13 +42,44 @@ namespace WebAPI.Controllers
         [HttpPost("register")]
         public ActionResult Register(UserForRegisterDto userForRegisterDto)
         {
-            var userExists = _authService.UserExists(userForRegisterDto.Email);
-            if (!userExists.Success)
+            var registerResult = _authService.Register(userForRegisterDto, userForRegisterDto.Password);
+            if (!registerResult.Success)
             {
-                return BadRequest(userExists);
+                return BadRequest(registerResult);
             }
 
-            var registerResult = _authService.Register(userForRegisterDto, userForRegisterDto.Password);
+            var result = _authService.CreateAccessToken(registerResult.Data);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
+        }
+
+        [HttpPost("registerwithcustomer")]
+        public ActionResult RegisterWithCustomer(CustomerForRegisterDto customerForRegisterDto)
+        {
+            var userForRegisterDto = new UserForRegisterDto
+            {
+                FirstName = customerForRegisterDto.FirstName,
+                LastName = customerForRegisterDto.LastName,
+                Email = customerForRegisterDto.Email,
+                Password = customerForRegisterDto.Password
+            };
+
+            var customer = new Customer
+            {
+                RoleId = customerForRegisterDto.RoleId,
+                UserId = customerForRegisterDto.UserId
+            };
+
+            var registerResult = _authService.RegisterWithCustomer(userForRegisterDto, userForRegisterDto.Password, customer);
+            if (!registerResult.Success)
+            {
+                return BadRequest(registerResult);
+            }
+
             var result = _authService.CreateAccessToken(registerResult.Data);
             if (result.Success)
             {

@@ -42,7 +42,12 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<EfCustomerDal>().As<ICustomerDal>();
             builder.RegisterType<RoleManager>().As<IRoleService>();
             builder.RegisterType<EfRoleDal>().As<IRoleDal>();
-
+            builder.RegisterType<ProfileImageManager>().As<IProfileImageService>();
+            builder.RegisterType<EfProfileImageDal>().As<IProfileImageDal>();
+            builder.RegisterType<LanguageManager>().As<ILanguageService>();
+            builder.RegisterType<EfLanguageDal>().As<ILanguageDal>();
+            builder.RegisterType<TranslateManager>().As<ITranslateService>();
+            builder.RegisterType<EfTranslateDal>().As<ITranslateDal>();
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 

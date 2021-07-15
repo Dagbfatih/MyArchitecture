@@ -30,7 +30,7 @@ namespace Business.Constants
         public static string MustBeMinOneCategory = "Must Be Minimum One Category";
         public static string MustBeMinTwoOption = "Minimum İki Seçenek Olmalı";
 
-        public static string AuthorizationDenied = "Authorization Denied";
+        public static string AuthorizationDenied = "Yetki Reddedildi";
         public static string SuccessfulLogin = "Giriş Başarılı";
         public static string UserRegistered = "Kayıt Başarılı";
         public static string PasswordError = "Parola Hatası";
@@ -71,5 +71,19 @@ namespace Business.Constants
         public static string CategoryExists="Aynı kategori birden fazla eklenemez";
         public static string OptionExists="Aynı seçenekten birden fazla eklenemez";
         public static string QuestionExists = "Aynı soruyu birden fazla eklemeyezsiniz";
+        public static string ProfileImagesLimited="En fazla bir resminiz olabilir";
+        public static string ProfileImageAdded="Resim eklendi";
+        public static string ProfileImageDeleted="Resim silindi";
+        public static string ProfileImageUpdated="Resim güncellendi";
+        public static string EmailExists="E-posta adresi mevcut";
+
+        public static string TestUpdated = "Test güncellendi";
+        internal static string LanguageCreated;
+        internal static string LanguageDeleted;
+        internal static string LanguageUpdated;
+        internal static string TranslateDeleted;
+        internal static string TranslateUpdated;
+
+        public static string TranslateCreated { get; internal set; }
     }
 }

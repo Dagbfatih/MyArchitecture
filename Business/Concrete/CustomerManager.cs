@@ -1,12 +1,14 @@
 ﻿using Business.Abstract;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.Business;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -39,7 +41,7 @@ namespace Business.Concrete
         private IResult CheckIfUserExists(Customer customer)
         {
             var result = this.GetByUser(customer.UserId);
-            if (result.Success)
+            if (result.Data != null)
             {
                 return new ErrorResult(Messages.UserAlreadyExists);
             }
@@ -72,6 +74,11 @@ namespace Business.Concrete
         {
             _customerDal.Update(entity);
             return new SuccessResult(Messages.CustomerUpdated);
+        }
+
+        public IDataResult<CustomerDetailsDto> GetCustomerDetailsByUser(int userId)
+        {
+            return new SuccessDataResult<CustomerDetailsDto>(_customerDal.GetCustomerDetailsByUser(userId));
         }
     }
 }

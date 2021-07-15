@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Caching;
@@ -60,12 +61,14 @@ namespace Business.Concrete
                 StarQuestion = question.StarQuestion,
                 UserId = question.UserId,
             };
-            question.QuestionId=_questionDal.Add(addedQuestion).QuestionId;
+            question.QuestionId = _questionDal.Add(addedQuestion).QuestionId;
 
             AddRelations(question);
             return new SuccessResult(Messages.QuestionAdded);
         }
- 
+
+
+
         [TransactionScopeAspect]
         private void AddRelations(QuestionDetailsDto question)
         {
@@ -87,12 +90,112 @@ namespace Business.Concrete
             }
         }
 
+        [ValidationAspect(typeof(QuestionValidator))]
+        [TransactionScopeAspect]
+        public IResult UpdateWithDetails(QuestionDetailsDto question)
+        {
+            var updatedQuestion = new Question
+            {
+                QuestionId = question.QuestionId,
+                BrokenQuestion = question.BrokenQuestion,
+                Privacy = question.Privacy,
+                QuestionText = question.QuestionText,
+                StarQuestion = question.StarQuestion,
+                UserId = question.UserId,
+            };
+            _questionDal.Update(updatedQuestion);
+
+            UpdateRelations(question);
+            return new SuccessResult(Messages.QuestionAdded);
+        }
+
+        [TransactionScopeAspect]
+        private void UpdateRelations(QuestionDetailsDto question)
+        {
+            var defaultOptions = _optionService.GetAllByQuestionId(question.QuestionId).Data;
+            var defaultCategories = _questionCategoryService.GetCategoriesByQuestionId(question.QuestionId).Data;
+
+            foreach (var option in defaultOptions)
+            {
+                if (!question.Options.Any(o => o.Id == option.Id))
+                {
+                    _optionService.Delete(option);
+                }
+            }
+
+            foreach (var option in question.Options)
+            {
+                option.QuestionId = question.QuestionId;
+
+                if (_optionService.Get(option.Id).Data == null)
+                {
+                    _optionService.Add(option);
+                }
+                else
+                {
+                    _optionService.Update(option);
+                }
+
+                Thread.Sleep(100);
+            }
+
+            foreach (var category in defaultCategories)
+            {
+                if (!question.Categories.Any(c => c.CategoryId == category.CategoryId))
+                {
+                    _questionCategoryService.Delete(category);
+                }
+            }
+
+            foreach (var category in question.Categories)
+            {
+                var addedQuestionCategory = new QuestionCategory
+                {
+                    CategoryId = category.CategoryId,
+                    QuestionId = question.QuestionId
+                };
+                var exists = _questionCategoryService.Get(addedQuestionCategory.Id).Data;
+                if (exists == null)
+                {
+                    _questionCategoryService.Add(addedQuestionCategory);
+                }
+                else
+                {
+                    addedQuestionCategory.Id = exists.Id;
+                    _questionCategoryService.Update(addedQuestionCategory);
+                }
+                Thread.Sleep(100);
+            }
+        }
+
         [CacheRemoveAspect("IQuestionService.Get")]
+        [TransactionScopeAspect]
         public IResult Delete(Question question)
         {
-            DeleteRelations(question);
             _questionDal.Delete(question);
+            DeleteRelations(question);
             return new SuccessResult(Messages.QuestionDeleted);
+        }
+
+        private void DeleteRelations(Question question)
+        {
+            var deletedOptions = _optionService.GetAllByQuestionId(question.QuestionId).Data;
+            var deletedCategories = _questionCategoryService.GetCategoriesByQuestionId(question.QuestionId).Data;
+            var deletedTestQuestions = _testQuestionService.GetTestQuestionsByQuestionId(question.QuestionId).Data;
+
+            foreach (var option in deletedOptions)
+            {
+                _optionService.Delete(option);
+            }
+            foreach (var category in deletedCategories)
+            {
+                _questionCategoryService.Delete(category);
+            }
+
+            foreach (var testQuestion in deletedTestQuestions)
+            {
+                _testQuestionService.Delete(testQuestion);
+            }
         }
 
         [CacheAspect(duration: 10)]
@@ -170,36 +273,32 @@ namespace Business.Concrete
             return new SuccessDataResult<List<QuestionDetailsDto>>(_questionDal.GetDetailsByQuestionText(text));
         }
 
-        private void DeleteRelations(Question question)
-        {
-            var deletedOptions = _optionService.GetAllByQuestionId(question.QuestionId).Data;
-            var deletedCategories = _questionCategoryService.GetCategoriesByQuestionId(question.QuestionId).Data;
-            var deletedTestQuestions = _testQuestionService.GetTestQuestionsByQuestionId(question.QuestionId).Data;
-
-            foreach (var option in deletedOptions)
-            {
-                _optionService.Delete(option);
-            }
-            foreach (var category in deletedCategories)
-            {
-                _questionCategoryService.Delete(category);
-            }
-
-            foreach (var testQuestion in deletedTestQuestions)
-            {
-                _testQuestionService.Delete(testQuestion);
-            }
-        }
-
         public IDataResult<Question> Get(int id)
         {
-            return new SuccessDataResult<Question>(_questionDal.Get(q=> q.QuestionId == id));
+            return new SuccessDataResult<Question>(_questionDal.Get(q => q.QuestionId == id));
 
         }
 
         public IDataResult<List<QuestionDetailsDto>> GetDetailsByCategory(int categoryId)
         {
             return new SuccessDataResult<List<QuestionDetailsDto>>(_questionDal.GetDetailsByCategory(categoryId));
+        }
+
+        public IDataResult<List<QuestionDetailsDto>> GetAllDetailsByPublic()
+        {
+            return new SuccessDataResult<List<QuestionDetailsDto>>(_questionDal.GetAllDetailsByPublic());
+        }
+
+        public IDataResult<List<QuestionDetailsDto>> GetDetailsByUser(int userId)
+        {
+            return new SuccessDataResult<List<QuestionDetailsDto>>(_questionDal.GetQuestionDetailsByUser(userId));
+        }
+
+        public IDataResult<List<QuestionDetailsDto>> GetDetailsByUserWithCategory(int userId, int categoryId)
+        {
+            return new SuccessDataResult<List<QuestionDetailsDto>>(_questionDal.GetDetailsByCategory(categoryId)
+                .Where(q => q.UserId == userId)
+                .ToList());
         }
     }
 }

@@ -8,6 +8,6 @@ namespace Core.Utilities.Messages
     {
         public static string InternalServerError => "Something went wrong. Please try again.";
 
-        public static string AuthorizationDenied => "Authorization Denied";
+        public static string AuthorizationDenied => "Yetki Reddedildi";
     }
 }

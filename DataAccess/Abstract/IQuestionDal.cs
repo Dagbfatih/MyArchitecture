@@ -8,14 +8,16 @@ using System.Text;
 
 namespace DataAccess.Abstract
 {
-    public interface IQuestionDal:IEntityRepository<Question>
+    public interface IQuestionDal : IEntityRepository<Question>
     {
+        List<QuestionDetailsDto> GetAllDetailsByPublic();
         List<QuestionDetailsDto> GetQuestionDetails();
         QuestionDetailsDto GetQuestionDetailsById(int questionId);
         List<Question> GetQuestionsByCategoryId(int categoryId);
         QuestionCategoriesDto GetQuestionCategories(int questionId);
         List<QuestionDetailsDto> GetDetailsByQuestionText(string text);
         List<QuestionDetailsDto> GetDetailsByCategory(int categoryId);
+        List<QuestionDetailsDto> GetQuestionDetailsByUser(int userId);
 
     }
 }

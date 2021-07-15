@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 namespace WebAPI
 {
@@ -45,9 +46,11 @@ namespace WebAPI
                         IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey)
                     };
                 });
-            services.AddDependencyResolvers(new ICoreModule[] { 
+            services.AddDependencyResolvers(new ICoreModule[] {
                 new CoreModule()
             });
+
+            services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Swagger Api", Version = "v1" }));
 
         }
 
@@ -63,7 +66,13 @@ namespace WebAPI
 
             app.ConfigureCustomExceptionMiddleware();
 
+            app.UseStaticFiles();
+
             app.UseHttpsRedirection();
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Swagger Api V1"));
 
             app.UseRouting();
 
@@ -75,7 +84,7 @@ namespace WebAPI
             {
                 endpoints.MapControllers();
             });
-            
+
         }
     }
 }

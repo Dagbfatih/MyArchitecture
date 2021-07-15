@@ -11,7 +11,12 @@ namespace Business.Abstract
     {
         IResult AddWithDetails(TestDetailsDto testDetailsDto);
         IDataResult<List<TestDetailsDto>> GetTestDetails();
-        IDataResult<TestDetailsDto> GetTestDetailsById(int testId);
-        
+        IDataResult<TestDetailsDto> GetTestDetailsById(int id);
+        IDataResult<List<TestDetailsDto>> GetTestDetailsByUser(int userId);
+
+        IResult UpdateWithDetails(TestDetailsDto testDetailsDto);
+
+        IResult DeleteWithDetails(TestDetailsDto testDetailsDto); 
+
     }
 }

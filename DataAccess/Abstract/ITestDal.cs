@@ -10,6 +10,7 @@ namespace DataAccess.Abstract
     public interface ITestDal : IEntityRepository<Test>
     {
         List<TestDetailsDto> GetTestDetails();
-        TestDetailsDto GetTestDetailsById();
+        TestDetailsDto GetTestDetailsById(int id);
+        List<TestDetailsDto> GetTestDetailsByUser(int userId);
     }
 }

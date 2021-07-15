@@ -42,6 +42,28 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+        [HttpPut("updatewithdetails")]
+        public IActionResult UpdateWithDetails(TestDetailsDto test)
+        {
+            var result = _testService.UpdateWithDetails(test);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpDelete("deletewithdetails")]
+        public IActionResult DeleteWithDetails(TestDetailsDto test)
+        {
+            var result = _testService.DeleteWithDetails(test);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
         [HttpGet("getall")]
         public IActionResult GetAll()
         {
@@ -68,6 +90,28 @@ namespace WebAPI.Controllers
         public IActionResult Delete(Test test)
         {
             var result = _testService.Delete(test);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("gettestdetailsbyuser")]
+        public IActionResult GetTestDetailsByUser(int userId)
+        {
+            var result = _testService.GetTestDetailsByUser(userId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("gettestdetailsbyid")]
+        public IActionResult GetTestDetailsById(int id)
+        {
+            var result = _testService.GetTestDetailsById(id);
             if (result.Success)
             {
                 return Ok(result);

@@ -9,6 +9,7 @@ namespace Business.Abstract
 {
     public interface IQuestionService : IBusinessService<Question>
     {
+        IDataResult<List<QuestionDetailsDto>> GetAllDetailsByPublic();
         IResult AddWithDetails(QuestionDetailsDto question);
         IDataResult<List<Question>> GetAllByCategoryId(int categoryId);
         IDataResult<List<Question>> GetAllByStarQuestion();
@@ -21,7 +22,9 @@ namespace Business.Abstract
         IResult AddTransactionalOperation(Question question);
         IDataResult<List<QuestionDetailsDto>> GetDetailsByQuestionText(string text);
         IDataResult<List<QuestionDetailsDto>> GetDetailsByCategory(int categoryId);
-
+        IDataResult<List<QuestionDetailsDto>> GetDetailsByUser(int userId);
+        IDataResult<List<QuestionDetailsDto>> GetDetailsByUserWithCategory(int userId, int categoryId);
+        IResult UpdateWithDetails(QuestionDetailsDto question);
 
     }
 }

@@ -61,5 +61,25 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<User>(_userDal.Get(u => u.Id == id));
         }
+
+        public IResult UpdateWithoutPassword(User user)
+        {
+            var updatedUser = new User
+            {
+                Id = user.Id,
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Status = user.Status
+            };
+
+            _userDal.Update(user, u => u.FirstName, u => u.LastName, u => u.Email, u => u.Status);
+            return new SuccessResult(Messages.UserUpdated);
+        }
+
+        public int AddWithId(User user)
+        {
+            return _userDal.Add(user).Id;
+        }
     }
 }

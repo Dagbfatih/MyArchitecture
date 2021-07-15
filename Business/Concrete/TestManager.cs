@@ -11,7 +11,9 @@ using Entities.Concrete;
 using Entities.Dtos;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Business.Concrete
 {
@@ -96,9 +98,27 @@ namespace Business.Concrete
             return new SuccessDataResult<List<TestDetailsDto>>(_testDal.GetTestDetails());
         }
 
-        public IDataResult<TestDetailsDto> GetTestDetailsById(int testId)
+        public IDataResult<TestDetailsDto> GetTestDetailsById(int id)
         {
-            return new SuccessDataResult<TestDetailsDto>(_testDal.GetTestDetailsById());
+            return new SuccessDataResult<TestDetailsDto>(_testDal.GetTestDetailsById(id));
+        }
+
+        public IResult DeleteWithDetails(TestDetailsDto testDetailsDto)
+        {
+            var test = new Test
+            {
+                Id = testDetailsDto.TestId,
+                MixedCategory = testDetailsDto.MixedCategory,
+                Privacy = testDetailsDto.Privacy,
+                TestName = testDetailsDto.TestName,
+                TestNotes = testDetailsDto.TestNotes,
+                TestTime = testDetailsDto.TestTime,
+                UserId = testDetailsDto.UserId
+            };
+            _testDal.Delete(test);
+            DeleteRelations(test);
+
+            return new SuccessResult(Messages.TestDeleted);
         }
 
         private void DeleteRelations(Test test)
@@ -113,6 +133,65 @@ namespace Business.Concrete
             }
         }
 
+        public IDataResult<List<TestDetailsDto>> GetTestDetailsByUser(int userId)
+        {
+            return new SuccessDataResult<List<TestDetailsDto>>(_testDal.GetTestDetailsByUser(userId));
+        }
+
+        [TransactionScopeAspect]
+        public IResult UpdateWithDetails(TestDetailsDto testDetailsDto)
+        {
+            var test = new Test
+            {
+                Id = testDetailsDto.TestId,
+                MixedCategory = testDetailsDto.MixedCategory,
+                Privacy = testDetailsDto.Privacy,
+                TestName = testDetailsDto.TestName,
+                TestNotes = testDetailsDto.TestNotes,
+                TestTime = testDetailsDto.TestTime,
+                UserId = testDetailsDto.UserId
+            };
+            _testDal.Update(test);
+            UpdateRelations(testDetailsDto);
+            return new SuccessResult(Messages.TestUpdated);
+        }
+
+        [TransactionScopeAspect]
+        private void UpdateRelations(TestDetailsDto test)
+        {
+            var defaultQuestions = _testQuestionDal.GetAll(t=>t.TestId==test.TestId);
+
+            foreach (var question in defaultQuestions)
+            {
+                if (!test.Questions.Any(q => q.QuestionId == question.QuestionId))
+                {
+                    _testQuestionDal.Delete(question);
+                }
+            }
+
+            foreach (var question in test.Questions)
+            {
+                var updatedTestQuestion = new TestQuestion
+                {
+                    QuestionId = question.QuestionId,
+                    TestId = test.TestId
+                };
+
+                var exists = _testQuestionDal.Get(t => t.QuestionId == updatedTestQuestion.QuestionId && t.TestId == updatedTestQuestion.TestId);
+                if (exists == null)
+                {
+                    _testQuestionDal.Add(updatedTestQuestion);
+                }
+                else
+                {
+                    updatedTestQuestion.Id = exists.Id;
+                    _testQuestionDal.Update(updatedTestQuestion);
+                }
+
+                Thread.Sleep(100);
+            }
+        }
+
         
-    }
+    } 
 }

@@ -26,7 +26,6 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<TestTicket> TestTickets { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Role> Roles { get; set; }
-
-
+        public DbSet<ProfileImage> ProfileImages { get; set; }
     }
 }

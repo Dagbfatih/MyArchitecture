@@ -52,6 +52,17 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+        [HttpGet("getallbyquestion")]
+        public IActionResult GetAllByQuestion(int questionId)
+        {
+            var result = _optionService.GetAllByQuestionId(questionId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
         [HttpDelete("delete")]
         public IActionResult Delete(int id)
         {

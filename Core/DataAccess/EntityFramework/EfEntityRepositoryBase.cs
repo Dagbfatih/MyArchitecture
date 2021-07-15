@@ -58,5 +58,19 @@ namespace Core.DataAccess.EntityFramework
                 context.SaveChanges();
             }
         }
+
+        public void Update(TEntity entity, params Expression<Func<TEntity, object>>[] updatedProperties)
+        {
+            using (TContext context=new TContext())
+            {
+                var updatedEnttiy = context.Entry(entity);
+                foreach (var property in updatedProperties)
+                {
+                    updatedEnttiy.Property(property).IsModified = true;
+                }
+
+                context.SaveChanges();
+            }
+        }
     }
 }

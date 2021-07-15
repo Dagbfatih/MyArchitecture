@@ -14,5 +14,7 @@ namespace Core.DataAccess
         void Delete(T entity);
         void Update(T entity);
 
+        void Update(T entity, params Expression<Func<T, object>>[] includeProperties);
+
     }
 }

@@ -261,5 +261,103 @@ namespace DataAccess.Concrete
                 return result.ToList();
             }
         }
+
+        public List<QuestionDetailsDto> GetAllDetailsByPublic()
+        {
+            using (SqlContext context = new SqlContext())
+            {
+                var result = from q in context.Questions
+                             where q.Privacy == true // public
+                             select new QuestionDetailsDto
+                             {
+                                 QuestionId = q.QuestionId,
+
+                                 Categories = (from c in context.Categories
+                                               join qc in context.QuestionCategories
+                                               on q.QuestionId equals qc.QuestionId
+                                               where qc.CategoryId == c.CategoryId
+                                               select new Category
+                                               {
+                                                   CategoryId = c.CategoryId,
+                                                   CategoryName = c.CategoryName
+                                               }).ToList(),
+
+                                 QuestionText = q.QuestionText,
+
+                                 StarQuestion = q.StarQuestion,
+
+                                 BrokenQuestion = q.BrokenQuestion,
+
+                                 Privacy = q.Privacy,
+
+                                 UserId = q.UserId,
+                                 UserName = (from u in context.Users
+                                             where q.UserId == u.Id
+                                             select u.FirstName + " " + u.LastName).FirstOrDefault(),
+
+                                 Options = (from o in context.Options
+                                            where q.QuestionId == o.QuestionId
+                                            select new Option
+                                            {
+                                                Id = o.Id,
+                                                QuestionId = o.QuestionId,
+                                                OptionText = o.OptionText,
+                                                Accuracy = o.Accuracy
+                                            }).ToList()
+                             };
+
+
+                return result.ToList();
+            }
+        }
+
+        public List<QuestionDetailsDto> GetQuestionDetailsByUser(int userId)
+        {
+            using (SqlContext context = new SqlContext())
+            {
+                var result = from q in context.Questions
+                             where q.UserId == userId
+                             select new QuestionDetailsDto
+                             {
+                                 QuestionId = q.QuestionId,
+
+                                 Categories = (from c in context.Categories
+                                               join qc in context.QuestionCategories
+                                               on q.QuestionId equals qc.QuestionId
+                                               where qc.CategoryId == c.CategoryId
+                                               select new Category
+                                               {
+                                                   CategoryId = c.CategoryId,
+                                                   CategoryName = c.CategoryName
+                                               }).ToList(),
+
+                                 QuestionText = q.QuestionText,
+
+                                 StarQuestion = q.StarQuestion,
+
+                                 BrokenQuestion = q.BrokenQuestion,
+
+                                 Privacy = q.Privacy,
+
+                                 UserId = q.UserId,
+                                 UserName = (from u in context.Users
+                                             where q.UserId == u.Id
+                                             select u.FirstName + " " + u.LastName).FirstOrDefault(),
+
+                                 Options = (from o in context.Options
+                                            where q.QuestionId == o.QuestionId
+                                            select new Option
+                                            {
+                                                Id = o.Id,
+                                                QuestionId = o.QuestionId,
+                                                OptionText = o.OptionText,
+                                                Accuracy = o.Accuracy
+                                            }).ToList()
+                             };
+
+
+                return result.ToList();
+            }
+        }
     }
 }

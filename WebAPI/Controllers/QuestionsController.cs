@@ -33,6 +33,17 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+        [HttpGet("getalldetailsbypublic")]
+        public IActionResult GetAllDetailsByPublic()
+        {
+            var result = _questionService.GetAllDetailsByPublic();
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
         [HttpPost("add")]
         public IActionResult Add(Question question)
         {
@@ -45,9 +56,17 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("addwithrelations")]
-        public IActionResult AddWithId(QuestionDetailsDto question)
+        public IActionResult AddWithRelations(QuestionDetailsDto question)
         {
             var result = _questionService.AddWithDetails(question);
+
+            return Ok(result);
+        }
+
+        [HttpPut("updatewithrelations")]
+        public IActionResult UpdateWithRelations(QuestionDetailsDto question)
+        {
+            var result = _questionService.UpdateWithDetails(question);
 
             return Ok(result);
         }
@@ -166,6 +185,28 @@ namespace WebAPI.Controllers
         public IActionResult GetDetailsByCategoryId(int categoryId)
         {
             var result = _questionService.GetDetailsByCategory(categoryId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("getdetailsbyuser")]
+        public IActionResult GetDetailsByUser(int userId)
+        {
+            var result = _questionService.GetDetailsByUser(userId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("getdetailsbyuserwithcategory")]
+        public IActionResult GetDetailsByUserWithCategory(int userId, int categoryId)
+        {
+            var result = _questionService.GetDetailsByUserWithCategory(userId, categoryId);
             if (result.Success)
             {
                 return Ok(result);
