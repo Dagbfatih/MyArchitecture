@@ -40,6 +40,7 @@ namespace Business.Constants
 
         public static string TestCreated = "Test Oluşturuldu";
         public static string TestDeleted = "Test Silindi";
+        public static string TestUpdated = "Test güncellendi";
 
         public static string DeleteFailed = "Silme İşlemi Başarısız";
 
@@ -71,19 +72,33 @@ namespace Business.Constants
         public static string CategoryExists="Aynı kategori birden fazla eklenemez";
         public static string OptionExists="Aynı seçenekten birden fazla eklenemez";
         public static string QuestionExists = "Aynı soruyu birden fazla eklemeyezsiniz";
+        public static string EmailExists = "E-posta adresi mevcut";
         public static string ProfileImagesLimited="En fazla bir resminiz olabilir";
+
         public static string ProfileImageAdded="Resim eklendi";
         public static string ProfileImageDeleted="Resim silindi";
         public static string ProfileImageUpdated="Resim güncellendi";
-        public static string EmailExists="E-posta adresi mevcut";
 
-        public static string TestUpdated = "Test güncellendi";
-        internal static string LanguageCreated;
-        internal static string LanguageDeleted;
-        internal static string LanguageUpdated;
-        internal static string TranslateDeleted;
-        internal static string TranslateUpdated;
+       
 
-        public static string TranslateCreated { get; internal set; }
+       
+
+        public static string LanguageCreated="Dil eklendi";
+        public static string LanguageDeleted="Dil silindi";
+        public static string LanguageUpdated = "Dil güncellendi";
+
+        public static string TranslateCreated = "Çeviri oluşturuldu";
+        public static string TranslateDeleted = "Çeviri eklendi";
+        public static string TranslateUpdated = "Çeviri güncellendi";
+
+        public static string TestResultCreated = "Test sonucu kaydedildi";
+        public static string TestResultDeleted = "Test sonucu silindi";
+        public static string TestResultUpdated = "Test sonucu güncellendi";
+
+        public static string QuestionResultCreated = "Soru kaydedildi";
+        public static string QuestionResultDeleted = "Soru silindi";
+        public static string QuestionResultUpdated = "Soru güncellendi";
+
+        
     }
 }

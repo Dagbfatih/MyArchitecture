@@ -48,6 +48,10 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<EfLanguageDal>().As<ILanguageDal>();
             builder.RegisterType<TranslateManager>().As<ITranslateService>();
             builder.RegisterType<EfTranslateDal>().As<ITranslateDal>();
+            builder.RegisterType<TestResultManager>().As<ITestResultService>();
+            builder.RegisterType<EfTestResultDal>().As<ITestResultDal>();
+            builder.RegisterType<QuestionResultManager>().As<IQuestionResultService>();
+            builder.RegisterType<EfQuestionResultDal>().As<IQuestionResultDal>();
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 

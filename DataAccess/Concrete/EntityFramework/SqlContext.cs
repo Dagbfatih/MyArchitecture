@@ -13,6 +13,7 @@ namespace DataAccess.Concrete.EntityFramework
         {
             optionsBuilder.UseSqlServer(@"Server=DESKTOP-QPSMCVQ\TEW_SQLEXPRESS;Database=FunTestProjectDb;Trusted_Connection=true");
         }
+
         public DbSet<Question> Questions { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<QuestionCategory> QuestionCategories { get; set; }
@@ -27,5 +28,10 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<ProfileImage> ProfileImages { get; set; }
+        public DbSet<Language> Languages { get; set; }
+        public DbSet<Translate> Translates { get; set; }
+        public DbSet<TestResult> TestResults { get; set; }
+        public DbSet<QuestionResult> QuestionResults { get; set; }
+
     }
 }
