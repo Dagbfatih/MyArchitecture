@@ -108,6 +108,17 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+        [HttpGet("gettestdetailsbypublic")]
+        public IActionResult GetTestDetailsByPublic()
+        {
+            var result = _testService.GetTestDetailsByPublic();
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
         [HttpGet("gettestdetailsbyid")]
         public IActionResult GetTestDetailsById(int id)
         {

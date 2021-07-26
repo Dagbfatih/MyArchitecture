@@ -15,5 +15,7 @@ namespace Entities.Dtos
         public string LastName { get; set; }
         public string Email { get; set; }
         public bool Status { get; set; }
+        public bool IsConfirmed { get; set; }
+
     }
 }

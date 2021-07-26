@@ -124,7 +124,7 @@ namespace Business.Concrete
         private void DeleteRelations(Test test)
         {
             var deletedTestQuestions = _testQuestionDal.GetAll(tq => tq.TestId == test.Id);
-            if (deletedTestQuestions!=null)
+            if (deletedTestQuestions != null)
             {
                 foreach (var testQuestion in deletedTestQuestions)
                 {
@@ -159,7 +159,7 @@ namespace Business.Concrete
         [TransactionScopeAspect]
         private void UpdateRelations(TestDetailsDto test)
         {
-            var defaultQuestions = _testQuestionDal.GetAll(t=>t.TestId==test.TestId);
+            var defaultQuestions = _testQuestionDal.GetAll(t => t.TestId == test.TestId);
 
             foreach (var question in defaultQuestions)
             {
@@ -192,6 +192,11 @@ namespace Business.Concrete
             }
         }
 
-        
-    } 
+        public IDataResult<List<TestDetailsDto>> GetTestDetailsByPublic()
+        {
+            return new SuccessDataResult<List<TestDetailsDto>>(_testDal
+                .GetTestDetails()
+                .Where(t => t.Privacy).ToList());
+        }
+    }
 }

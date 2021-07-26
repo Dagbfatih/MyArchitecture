@@ -13,7 +13,7 @@ namespace DataAccess.Concrete.EntityFramework
     {
         public CustomerDetailsDto GetCustomerDetailsByUser(int userId)
         {
-            using (SqlContext context=new SqlContext())
+            using (SqlContext context = new SqlContext())
             {
                 var result = from c in context.Customers
                              where c.UserId == userId
@@ -30,7 +30,8 @@ namespace DataAccess.Concrete.EntityFramework
                                  Email = u.Email,
                                  FirstName = u.FirstName,
                                  LastName = u.LastName,
-                                 Status = u.Status
+                                 Status = u.Status,
+                                 IsConfirmed = c.IsConfirmed
                              };
 
                 return result.FirstOrDefault();

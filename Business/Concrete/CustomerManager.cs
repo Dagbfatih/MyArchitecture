@@ -4,6 +4,7 @@ using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.Business;
+using Core.Entities.Concrete;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
 using DataAccess.Abstract;
@@ -18,10 +19,13 @@ namespace Business.Concrete
     public class CustomerManager : ICustomerService
     {
         ICustomerDal _customerDal;
+        IUserOperationClaimService _userOperationClaimService;
 
-        public CustomerManager(ICustomerDal customerDal)
+        public CustomerManager(ICustomerDal customerDal,
+            IUserOperationClaimService userOperationClaimService)
         {
             _customerDal = customerDal;
+            _userOperationClaimService = userOperationClaimService;
         }
 
         [ValidationAspect(typeof(CustomerValidator))]
@@ -74,6 +78,21 @@ namespace Business.Concrete
         {
             _customerDal.Update(entity);
             return new SuccessResult(Messages.CustomerUpdated);
+        }
+
+        [TransactionScopeAspect]
+        public IResult ConfirmAccount(Customer entity)
+        {
+            entity.IsConfirmed = true;
+
+            _customerDal.Update(entity);
+            _userOperationClaimService.Add(new UserOperationClaim
+            {
+                OperationClaimId = 3,
+                UserId = entity.UserId
+            });
+
+            return new SuccessResult(Messages.AccountConfirmed);
         }
 
         public IDataResult<CustomerDetailsDto> GetCustomerDetailsByUser(int userId)

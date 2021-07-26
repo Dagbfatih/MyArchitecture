@@ -1,4 +1,6 @@
-﻿using Core.CrossCuttingConcerns.Caching;
+﻿using Core.Business.Services;
+using Core.Business.Services.Concrete;
+using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Caching.Microsoft;
 using Core.Extensions;
 using Core.Utilities.Errors;
@@ -21,6 +23,8 @@ namespace Core.DependencyResolvers
             serviceCollection.AddSingleton<ICacheManager, MemoryCacheManager>();
             serviceCollection.AddSingleton<Stopwatch>();
             serviceCollection.AddSingleton<IErrorDetails, DefaultErrorDetails>();
+            serviceCollection.AddSingleton<IRequestUserService, RequestUserManager>();
+
         }
     }
 }

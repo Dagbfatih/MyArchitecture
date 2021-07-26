@@ -11,7 +11,7 @@ namespace DataAccess.Concrete.EntityFramework
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=DESKTOP-QPSMCVQ\TEW_SQLEXPRESS;Database=FunTestProjectDb;Trusted_Connection=true");
+            optionsBuilder.UseSqlServer(@"Server=(localdb)\LocalHost;Database=FunnyTestProject;Trusted_Connection=true");
         }
 
         public DbSet<Question> Questions { get; set; }

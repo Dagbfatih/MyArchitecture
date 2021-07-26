@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Transaction;
@@ -12,6 +13,7 @@ using Core.Utilities.Security.JWT;
 using Entities.Concrete;
 using Entities.Dtos;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
 
@@ -22,12 +24,17 @@ namespace Business.Concrete
         private IUserService _userService;
         private ITokenHelper _tokenHelper;
         private ICustomerService _customerService;
+        private IUserOperationClaimService _userOperationClaimService;
 
-        public AuthManager(IUserService userService, ITokenHelper tokenHelper, ICustomerService customerService)
+        public AuthManager(IUserService userService,
+            ITokenHelper tokenHelper,
+            ICustomerService customerService,
+            IUserOperationClaimService userOperationClaimService)
         {
             _userService = userService;
             _tokenHelper = tokenHelper;
             _customerService = customerService;
+            _userOperationClaimService = userOperationClaimService;
         }
 
         [ValidationAspect(typeof(AuthRegisterValidator))]
@@ -107,16 +114,54 @@ namespace Business.Concrete
                 PasswordSalt = passwordSalt,
                 Status = true
             };
-            var userId=_userService.AddWithId(user);
+            var userId = _userService.AddWithId(user);
+            user.Id = userId;
 
             customer.UserId = userId;
-            var customerAddResult=_customerService.Add(customer);
+            var customerAddResult = _customerService.Add(customer);
             if (!customerAddResult.Success)
             {
                 throw new TransactionException(customerAddResult.Message);
             }
 
+            AddClaims(new CustomerForRegisterDto
+            {
+                Customer = customer,
+                User = userForRegisterDto
+            });
+
             return new SuccessDataResult<User>(user, Messages.UserRegistered);
+        }
+
+        private void AddClaims(CustomerForRegisterDto customer)
+        {
+            List<UserOperationClaim> claims = new List<UserOperationClaim>()
+            {
+                new UserOperationClaim
+                {
+                    OperationClaimId=2,
+                    UserId=customer.Customer.UserId
+                }
+            };
+
+            if (customer.Customer.RoleId == 1)
+            {
+                claims.Add(new UserOperationClaim
+                {
+                    OperationClaimId = 4,
+                    UserId = customer.Customer.UserId
+                });
+            }
+            else
+            {
+                claims.Add(new UserOperationClaim
+                {
+                    OperationClaimId = 3,
+                    UserId = customer.Customer.UserId
+                });
+            }
+
+            _userOperationClaimService.AddClaims(claims);
         }
     }
 }

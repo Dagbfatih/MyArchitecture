@@ -289,6 +289,7 @@ namespace Business.Concrete
             return new SuccessDataResult<List<QuestionDetailsDto>>(_questionDal.GetAllDetailsByPublic());
         }
 
+        [SecuredOperation("admin, user", true)]
         public IDataResult<List<QuestionDetailsDto>> GetDetailsByUser(int userId)
         {
             return new SuccessDataResult<List<QuestionDetailsDto>>(_questionDal.GetQuestionDetailsByUser(userId));

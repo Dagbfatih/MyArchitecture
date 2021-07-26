@@ -52,6 +52,10 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<EfTestResultDal>().As<ITestResultDal>();
             builder.RegisterType<QuestionResultManager>().As<IQuestionResultService>();
             builder.RegisterType<EfQuestionResultDal>().As<IQuestionResultDal>();
+            builder.RegisterType<UserOperationClaimManager>().As<IUserOperationClaimService>();
+            builder.RegisterType<EfUserOperationClaimDal>().As<IUserOperationClaimDal>();
+            builder.RegisterType<OperationClaimManager>().As<IOperationClaimService>();
+            builder.RegisterType<EfOperationClaimDal>().As<IOperationClaimDal>();
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 

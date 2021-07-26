@@ -39,7 +39,7 @@ namespace WebAPI
                     {
                         ValidateIssuer = true,
                         ValidateAudience = true,
-                        ValidateLifetime = true,
+                        ValidateLifetime = false,
                         ValidIssuer = tokenOptions.Issuer,
                         ValidAudience = tokenOptions.Audience,
                         ValidateIssuerSigningKey = true,
@@ -65,6 +65,8 @@ namespace WebAPI
             app.UseCors(builder => builder.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod());
 
             app.ConfigureCustomExceptionMiddleware();
+
+            app.ConfigureCustomRequestUserMiddleware();
 
             app.UseStaticFiles();
 

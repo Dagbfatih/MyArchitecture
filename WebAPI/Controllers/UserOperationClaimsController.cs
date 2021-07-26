@@ -11,40 +11,18 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UserOperationClaimsController : ControllerBase
     {
-        IUserService _userService;
-        public UsersController(IUserService userService)
+        IUserOperationClaimService _userOperationClaimService;
+        public UserOperationClaimsController(IUserOperationClaimService userOperationClaimService)
         {
-            _userService = userService;
+            _userOperationClaimService = userOperationClaimService;
         }
 
-        [HttpGet("getall")]
-        public IActionResult GetAll()
+        [HttpPost("add")]
+        public IActionResult Add(UserOperationClaim userOperationClaim)
         {
-            var result = _userService.GetAll();
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpGet("getbymail")]
-        public IActionResult GeyByMail(string email)
-        {
-            var result = _userService.GetByMail(email);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpGet("getbyid")]
-        public IActionResult GeyById(int id)
-        {
-            var result = _userService.Get(id);
+            var result = _userOperationClaimService.Add(userOperationClaim);
             if (result.Success)
             {
                 return Ok(result);
@@ -53,9 +31,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("update")]
-        public IActionResult Update(User user)
+        public IActionResult Update(UserOperationClaim userOperationClaim)
         {
-            var result = _userService.Update(user);
+            var result = _userOperationClaimService.Update(userOperationClaim);
             if (result.Success)
             {
                 return Ok(result);
@@ -63,10 +41,32 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpPost("updatewithoutpassword")]
-        public IActionResult UpdateWithoutPassword(User user)
+        [HttpGet("getall")]
+        public IActionResult GetAll()
         {
-            var result = _userService.UpdateWithoutPassword(user);
+            var result = _userOperationClaimService.GetAll();
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("getalldetails")]
+        public IActionResult GetAllDetails()
+        {
+            var result = _userOperationClaimService.GetAllDetails();
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("getalldetailsbyuser")]
+        public IActionResult GetAllDetailsByUser(int userId)
+        {
+            var result = _userOperationClaimService.GetAllDetailsByUser(userId);
             if (result.Success)
             {
                 return Ok(result);
@@ -75,9 +75,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpDelete("delete")]
-        public IActionResult Delete(User user)
+        public IActionResult Delete(UserOperationClaim userOperationClaim)
         {
-            var result = _userService.Delete(user);
+            var result = _userOperationClaimService.Delete(userOperationClaim);
             if (result.Success)
             {
                 return Ok(result);

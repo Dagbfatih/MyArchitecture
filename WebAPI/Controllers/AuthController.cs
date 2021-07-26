@@ -16,9 +16,11 @@ namespace WebAPI.Controllers
     public class AuthController : ControllerBase
     {
         private IAuthService _authService;
-        public AuthController(IAuthService authService)
+        private IUserOperationClaimService _userOperationClaimService;
+        public AuthController(IAuthService authService, IUserOperationClaimService userOperationClaimService)
         {
             _authService = authService;
+            _userOperationClaimService = userOperationClaimService;
         }
 
         [HttpPost("login")]
@@ -60,33 +62,23 @@ namespace WebAPI.Controllers
         [HttpPost("registerwithcustomer")]
         public ActionResult RegisterWithCustomer(CustomerForRegisterDto customerForRegisterDto)
         {
-            var userForRegisterDto = new UserForRegisterDto
-            {
-                FirstName = customerForRegisterDto.FirstName,
-                LastName = customerForRegisterDto.LastName,
-                Email = customerForRegisterDto.Email,
-                Password = customerForRegisterDto.Password
-            };
+            var registerResult = _authService.RegisterWithCustomer(
+                customerForRegisterDto.User,
+                customerForRegisterDto.User.Password,
+                customerForRegisterDto.Customer);
 
-            var customer = new Customer
-            {
-                RoleId = customerForRegisterDto.RoleId,
-                UserId = customerForRegisterDto.UserId
-            };
-
-            var registerResult = _authService.RegisterWithCustomer(userForRegisterDto, userForRegisterDto.Password, customer);
             if (!registerResult.Success)
             {
                 return BadRequest(registerResult);
             }
 
             var result = _authService.CreateAccessToken(registerResult.Data);
-            if (result.Success)
+            if (!result.Success)
             {
-                return Ok(result);
+                return BadRequest(result);
             }
 
-            return BadRequest(result);
+            return Ok(customerForRegisterDto);
         }
     }
 }

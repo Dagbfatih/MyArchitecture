@@ -99,6 +99,13 @@ namespace Business.Constants
         public static string QuestionResultDeleted = "Soru silindi";
         public static string QuestionResultUpdated = "Soru güncellendi";
 
-        
+        public static string OperationClaimAdded="Operasyon yetkisi oluşturuldu";
+        public static string OperationClaimDeleted= "Operasyon yetkisi silindi";
+        public static string OperationClaimUpdated= "Operasyon yetkisi güncellendi";
+
+        public static string UserOperationClaimAdded="Kullanıcı yetkisi eklendi";
+        public static string UserOperationClaimDeleted = "Kullanıcı yetkisi silindi";
+        public static string UserOperationClaimUpdated = "Kullanıcı yetkisi güncellendi";
+        internal static string AccountConfirmed;
     }
 }
