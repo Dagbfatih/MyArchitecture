@@ -1,14 +1,18 @@
-﻿using Core.Business.Services;
+﻿using Core.Business.Contexts.TranslationContext;
+using Core.Business.Services;
 using Core.Business.Services.Concrete;
 using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Caching.Microsoft;
 using Core.Extensions;
 using Core.Utilities.Errors;
 using Core.Utilities.IoC;
+using Core.Utilities.Mail;
+using Core.Utilities.Messages;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Text;
 
@@ -24,6 +28,11 @@ namespace Core.DependencyResolvers
             serviceCollection.AddSingleton<Stopwatch>();
             serviceCollection.AddSingleton<IErrorDetails, DefaultErrorDetails>();
             serviceCollection.AddSingleton<IRequestUserService, RequestUserManager>();
+            serviceCollection.AddSingleton<CoreMessages>();
+            serviceCollection.AddSingleton<ITranslationContext, TranslationContext>();
+            serviceCollection.AddSingleton<IEmailConfiguration, EmailConfiguration>();
+            serviceCollection.AddSingleton<IEmailService, EmailManager>();
+
 
         }
     }

@@ -1,5 +1,7 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constants;
+using Business.Services;
 using Core.Aspects.Autofac.Transaction;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
@@ -12,7 +14,7 @@ using System.Text;
 
 namespace Business.Concrete
 {
-    public class TestResultManager : ITestResultService
+    public class TestResultManager : BusinessMessagesService, ITestResultService
     {
         ITestResultDal _testResultDal;
         IQuestionResultService _questionResultService;
@@ -21,10 +23,12 @@ namespace Business.Concrete
             _testResultDal = testResultDal;
             _questionResultService = questionResultService;
         }
+
+
         public IResult Add(TestResult entity)
         {
             _testResultDal.Add(entity);
-            return new SuccessResult(Messages.TestResultCreated);
+            return new SuccessResult(_messages.TestResultCreated);
         }
 
         [TransactionScopeAspect]
@@ -43,13 +47,14 @@ namespace Business.Concrete
                 _questionResultService.AddWithDetails(questionResult);
             }
 
-            return new SuccessResult(Messages.TestResultCreated);
+            return new SuccessResult(_messages.TestResultCreated);
         }
 
+        [SecuredOperation("admin")]
         public IResult Delete(TestResult entity)
         {
             _testResultDal.Delete(entity);
-            return new SuccessResult(Messages.TestResultDeleted);
+            return new SuccessResult(_messages.TestResultDeleted);
         }
 
         public IDataResult<TestResult> Get(int id)
@@ -77,10 +82,11 @@ namespace Business.Concrete
             return new SuccessDataResult<TestResultDetailsDto>(_testResultDal.GetDetailsById(id));
         }
 
+        [SecuredOperation("admin")]
         public IResult Update(TestResult entity)
         {
             _testResultDal.Update(entity);
-            return new SuccessResult(Messages.TestResultUpdated);
+            return new SuccessResult(_messages.TestResultUpdated);
         }
     }
 }

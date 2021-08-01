@@ -1,7 +1,7 @@
 ﻿using Core.Entities.Abstract;
 
 
-namespace Entities.Concrete
+namespace Core.Entities.Concrete
 {
     public class Language:IEntity
     {

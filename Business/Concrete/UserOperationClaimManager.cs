@@ -1,5 +1,7 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constants;
+using Business.Services;
 using Core.Entities.Concrete;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
@@ -10,7 +12,7 @@ using System.Collections.Generic;
 
 namespace Business.Concrete
 {
-    public class UserOperationClaimManager : IUserOperationClaimService
+    public class UserOperationClaimManager : BusinessMessagesService, IUserOperationClaimService
     {
         IUserOperationClaimDal _userOperationClaimDal;
 
@@ -18,10 +20,11 @@ namespace Business.Concrete
         {
             _userOperationClaimDal = userOperationClaimDal;
         }
+
         public IResult Add(UserOperationClaim entity)
         {
             _userOperationClaimDal.Add(entity);
-            return new SuccessResult(Messages.UserOperationClaimAdded);
+            return new SuccessResult(_messages.UserOperationClaimAdded);
         }
 
         public IResult AddClaims(List<UserOperationClaim> claims)
@@ -31,13 +34,13 @@ namespace Business.Concrete
                 this.Add(userOperationClaim);
             }
 
-            return new SuccessResult(Messages.UserOperationClaimAdded);
+            return new SuccessResult(_messages.UserOperationClaimAdded);
         }
 
         public IResult Delete(UserOperationClaim entity)
         {
             _userOperationClaimDal.Delete(entity);
-            return new SuccessResult(Messages.UserOperationClaimDeleted);
+            return new SuccessResult(_messages.UserOperationClaimDeleted);
         }
 
         public IDataResult<UserOperationClaim> Get(int id)
@@ -67,7 +70,7 @@ namespace Business.Concrete
         public IResult Update(UserOperationClaim entity)
         {
             _userOperationClaimDal.Update(entity);
-            return new SuccessResult(Messages.UserOperationClaimUpdated);
+            return new SuccessResult(_messages.UserOperationClaimUpdated);
         }
     }
 }

@@ -12,6 +12,8 @@ using System;
 using System.Security;
 using System.Security.Claims;
 using System.Linq;
+using System.Collections.Generic;
+using Business.Services;
 
 namespace Business.BusinessAspects.Autofac
 {
@@ -20,12 +22,14 @@ namespace Business.BusinessAspects.Autofac
         private string[] _roles;
         private bool _isUserProtection;
         private IHttpContextAccessor _httpContextAccessor;
+        private readonly Messages _messages;
 
         public SecuredOperation(string roles, bool isUserProtection = false)
         {
             _roles = roles.Split(',');
             _isUserProtection = isUserProtection;
             _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
+            _messages = ServiceTool.ServiceProvider.GetService<Messages>();
         }
 
         protected override void OnBefore(IInvocation invocation)
@@ -45,25 +49,25 @@ namespace Business.BusinessAspects.Autofac
                     return;
                 }
             }
-            throw new SecurityException(Messages.AuthorizationDenied);
+            throw new SecurityException(_messages.AuthorizationDenied);
         }
 
         private IResult CheckCustomUserAuth(IInvocation invocation)
         {
             if (_isUserProtection)
             {
-                if (_httpContextAccessor.HttpContext.User.Claims.ToList().Count == 0)
+                int requestUserId = (int)invocation.Arguments.GetValue(0);
+                var httpUserId = _httpContextAccessor.HttpContext?.User.Claims
+                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
+
+                if (httpUserId == null)
                 {
-                    return new ErrorResult(Messages.AuthorizationDenied);
+                    return new ErrorResult(_messages.AuthorizationDenied);
                 }
 
-                int requestUserId = (int)invocation.Arguments.GetValue(0);
-                int httpUserId = Int32.Parse(_httpContextAccessor.HttpContext.User.
-                    FindFirst(ClaimTypes.NameIdentifier).Value);
-
-                if (requestUserId != httpUserId)
+                if (requestUserId != Convert.ToInt32(httpUserId))
                 {
-                    return new ErrorResult(Messages.AuthorizationDenied);
+                    return new ErrorResult(_messages.AuthorizationDenied);
                 }
             }
 

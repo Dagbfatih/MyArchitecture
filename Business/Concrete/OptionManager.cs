@@ -1,5 +1,7 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constants;
+using Business.Services;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
 using Core.Business;
@@ -13,7 +15,7 @@ using System.Text;
 
 namespace Business.Concrete
 {
-    public class OptionManager : IOptionService
+    public class OptionManager : BusinessMessagesService,IOptionService
     {
         IOptionDal _optionDal;
         public OptionManager(IOptionDal optionDal)
@@ -22,6 +24,7 @@ namespace Business.Concrete
         }
 
         [ValidationAspect(typeof(OptionValidator))]
+        [SecuredOperation("instructor")]
         public IResult Add(Option option)
         {
             var result = BusinessRules.Run(ChechIfOptionExistsOnQuestion(option));
@@ -30,7 +33,7 @@ namespace Business.Concrete
                 return result;
             }
             _optionDal.Add(option);
-            return new SuccessResult(Messages.OptionAdded);
+            return new SuccessResult(_messages.OptionAdded);
         }
 
         private IResult ChechIfOptionExistsOnQuestion(Option option)
@@ -41,26 +44,27 @@ namespace Business.Concrete
             {
                 if (optionChecked.OptionText == option.OptionText)
                 {
-                    return new ErrorResult(Messages.OptionExists);
+                    return new ErrorResult(_messages.OptionExists);
                 }
             }
             return new SuccessResult();
         }
 
+        [SecuredOperation("instructor")]
         public IResult Delete(Option option)
         {
             _optionDal.Delete(option);
-            return new SuccessResult(Messages.OptionDeleted);
+            return new SuccessResult(_messages.OptionDeleted);
         }
 
         public IDataResult<Option> Get(int id)
         {
-            return new SuccessDataResult<Option>(_optionDal.Get(o => o.Id == id), Messages.OptionGot);
+            return new SuccessDataResult<Option>(_optionDal.Get(o => o.Id == id), _messages.OptionGot);
         }
 
         public IDataResult<List<Option>> GetAll()
         {
-            return new SuccessDataResult<List<Option>>(_optionDal.GetAll(), Messages.OptionsGot);
+            return new SuccessDataResult<List<Option>>(_optionDal.GetAll(), _messages.OptionsGot);
         }
 
         public IDataResult<Option> GetOptionByCorrectOption(int questionId)
@@ -73,10 +77,11 @@ namespace Business.Concrete
             return new SuccessDataResult<List<Option>>(_optionDal.GetAll(o => o.QuestionId == questionId));
         }
 
+        [SecuredOperation("instructor")]
         public IResult Update(Option option)
         {
             _optionDal.Update(option);
-            return new SuccessResult(Messages.OptionUpdated);
+            return new SuccessResult(_messages.OptionUpdated);
         }
     }
 }

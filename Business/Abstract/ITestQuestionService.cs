@@ -9,6 +9,7 @@ namespace Business.Abstract
     public interface ITestQuestionService : IBusinessService<TestQuestion>
     {
         IDataResult<List<TestQuestion>> GetTestQuestionsByQuestionId(int questionId);
-        IResult TransactionalOperation(TestQuestion testQuestion);
+        IDataResult<List<TestQuestion>> GetAllByTest(int testId);
+        IDataResult<TestQuestion> GetAllByTestAndQuestion(int testId, int questionId);
     }
 }

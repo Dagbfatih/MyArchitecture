@@ -1,6 +1,7 @@
 ﻿using Business.Abstract;
 using Business.Concrete;
 using Business.Constants;
+using Core.Utilities.IoC;
 using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
 using Entities.Dtos;
@@ -9,21 +10,31 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Business.ValidationRules.FluentValidation
 {
     public class QuestionValidator : AbstractValidator<QuestionDetailsDto>
     {
+        private readonly Messages _messages;
         public QuestionValidator() // kurallar constructor içerisine yazılır. AbstactValidator ise FluentValidation'dan gelir.
         {
+            _messages = ServiceTool.ServiceProvider.GetService<Messages>();
+
             RuleFor(q => q.QuestionText).MinimumLength(2).MaximumLength(800);
-            RuleFor(q => q.Options).Must(MustMinTwoOption).WithMessage(Messages.MustBeMinTwoOption);
-            RuleFor(q => q.Categories).Must(MustMinOneCategory).WithMessage(Messages.MustBeMinOneCategory);
-            RuleFor(q => q.Options).Must(ChechIfOptionExistsOnQuestion).WithMessage(Messages.OptionExists);
-            RuleFor(q => q.Categories).Must(ChechIfcategoryExistsOnQuestion).WithMessage(Messages.CategoryExists);
+            RuleFor(q => q.Options).Must(MustMinTwoOption).WithMessage(_messages.MustBeMinTwoOption);
+            RuleFor(q => q.Categories).Must(MustMinOneCategory).WithMessage(_messages.MustBeMinOneCategory);
+            RuleFor(q => q.Options).Must(CheckIfOptionExistsOnQuestion).WithMessage(_messages.OptionExists);
+            RuleFor(q => q.Categories).Must(CheckIfcategoryExistsOnQuestion).WithMessage(_messages.CategoryExists);
+            RuleFor(q => q.Options).Must(CheckIfExistsCorrectOption).WithMessage(_messages.MustOneCorrectOption);
         }
 
-        private bool ChechIfcategoryExistsOnQuestion(List<Category> arg)
+        private bool CheckIfExistsCorrectOption(List<Option> arg)
+        {
+            return arg.Count(o => o.Accuracy) == 1;
+        }
+
+        private bool CheckIfcategoryExistsOnQuestion(List<Category> arg)
         {
             var categoriesDuplicate = arg.GroupBy(c => c.CategoryId)
                .Any(g => g.Count() > 1);
@@ -35,7 +46,7 @@ namespace Business.ValidationRules.FluentValidation
             return true;
         }
 
-        private bool ChechIfOptionExistsOnQuestion(List<Option> arg)
+        private bool CheckIfOptionExistsOnQuestion(List<Option> arg)
         {
             var optionsDuplicate = arg.GroupBy(o => o.OptionText)
                .Any(g => g.Count() > 1);

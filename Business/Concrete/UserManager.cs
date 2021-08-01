@@ -1,5 +1,7 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constants;
+using Business.Services;
 using Core.Entities.Concrete;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
@@ -10,7 +12,7 @@ using System.Text;
 
 namespace Business.Concrete
 {
-    public class UserManager : IUserService
+    public class UserManager : BusinessMessagesService, IUserService
     {
         IUserDal _userDal;
 
@@ -24,11 +26,6 @@ namespace Business.Concrete
             return _userDal.GetClaims(user);
         }
 
-        public void Add(User user)
-        {
-            _userDal.Add(user);
-        }
-
         public IDataResult<List<User>> GetAll()
         {
             return new SuccessDataResult<List<User>>(_userDal.GetAll());
@@ -39,22 +36,23 @@ namespace Business.Concrete
             return new SuccessDataResult<User>(_userDal.Get(u => u.Email == email));
         }
 
-        IResult IBusinessService<User>.Add(User entity)
+        public IResult Add(User entity)
         {
             _userDal.Add(entity);
-            return new SuccessResult(Messages.UserAdded);
+            return new SuccessResult(_messages.UserAdded);
         }
 
+        [SecuredOperation("admin")]
         public IResult Delete(User entity)
         {
             _userDal.Delete(entity);
-            return new SuccessResult(Messages.UserDeleted);
+            return new SuccessResult(_messages.UserDeleted);
         }
 
         public IResult Update(User entity)
         {
             _userDal.Update(entity);
-            return new SuccessResult(Messages.UserUpdated);
+            return new SuccessResult(_messages.UserUpdated);
         }
 
         public IDataResult<User> Get(int id)
@@ -74,7 +72,7 @@ namespace Business.Concrete
             };
 
             _userDal.Update(user, u => u.FirstName, u => u.LastName, u => u.Email, u => u.Status);
-            return new SuccessResult(Messages.UserUpdated);
+            return new SuccessResult(_messages.UserUpdated);
         }
 
         public int AddWithId(User user)

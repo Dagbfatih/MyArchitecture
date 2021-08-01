@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Core.Utilities.Errors;
 using System.Linq;
+using Core.Utilities.Services.Translate;
 
 namespace Core.Extensions
 {
@@ -59,11 +60,11 @@ namespace Core.Extensions
 			}
 			else if (e.GetType() == typeof(SecurityException))
 			{
-				_errorDetails = new DefaultErrorDetails(HttpStatusCode.Unauthorized, ExceptionMessage.AuthorizationDenied);
+				_errorDetails = new DefaultErrorDetails(HttpStatusCode.Unauthorized,"Authorization denied");
             }
 			else
 			{
-				_errorDetails = new DefaultErrorDetails(HttpStatusCode.InternalServerError, ExceptionMessage.InternalServerError);
+				_errorDetails = new DefaultErrorDetails(HttpStatusCode.InternalServerError,"Internal Server Error");
 			}
 
             await httpContext.Response.WriteAsync(_errorDetails.ToString());

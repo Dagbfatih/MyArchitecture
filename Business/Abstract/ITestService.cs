@@ -10,6 +10,7 @@ namespace Business.Abstract
     public interface ITestService : IBusinessService<Test>
     {
         IResult AddWithDetails(TestDetailsDto testDetailsDto);
+        IDataResult<int> AddWithId(Test test);
         IDataResult<List<TestDetailsDto>> GetTestDetails();
         IDataResult<TestDetailsDto> GetTestDetailsById(int id);
         IDataResult<List<TestDetailsDto>> GetTestDetailsByUser(int userId);

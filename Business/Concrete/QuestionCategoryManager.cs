@@ -1,5 +1,8 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constants;
+using Business.Services;
+using Core.Aspects.Autofac.Performance;
 using Core.Business;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
@@ -11,7 +14,7 @@ using System.Text;
 
 namespace Business.Concrete
 {
-    public class QuestionCategoryManager : IQuestionCategoryService
+    public class QuestionCategoryManager :BusinessMessagesService, IQuestionCategoryService
     {
         IQuestionCategoryDal _questionCategoryDal;
 
@@ -20,6 +23,7 @@ namespace Business.Concrete
             _questionCategoryDal = questionCategory;
         }
 
+        [SecuredOperation("instructor")]
         public IResult Add(QuestionCategory questionCategory)
         {
             var result = BusinessRules.Run(CheckIfCategoryExistsOnQuestion(questionCategory));
@@ -28,7 +32,7 @@ namespace Business.Concrete
                 return result;
             }
             _questionCategoryDal.Add(questionCategory);
-            return new SuccessResult(Messages.QuestionCategoryAdded);
+            return new SuccessResult(_messages.QuestionCategoryAdded);
         }
 
         private IResult CheckIfCategoryExistsOnQuestion(QuestionCategory questionCategory)
@@ -38,16 +42,17 @@ namespace Business.Concrete
             {
                 if (category.CategoryId == questionCategory.CategoryId)
                 {
-                    return new ErrorResult(Messages.CategoryExists);
+                    return new ErrorResult(_messages.CategoryExists);
                 }
             }
             return new SuccessResult();
         }
 
+        [SecuredOperation("instructor")]
         public IResult Delete(QuestionCategory questionCategory)
         {
             _questionCategoryDal.Delete(questionCategory);
-            return new SuccessResult(Messages.QuestionCategoryDeleted);
+            return new SuccessResult(_messages.QuestionCategoryDeleted);
         }
 
         public IDataResult<QuestionCategory> Get(int id)
@@ -55,20 +60,23 @@ namespace Business.Concrete
             return new SuccessDataResult<QuestionCategory>(_questionCategoryDal.Get(qc => qc.Id == id));
         }
 
+        [PerformanceAspect(5)]
         public IDataResult<List<QuestionCategory>> GetAll()
         {
             return new SuccessDataResult<List<QuestionCategory>>(_questionCategoryDal.GetAll());
         }
 
+        [PerformanceAspect(5)]
         public IDataResult<List<QuestionCategory>> GetCategoriesByQuestionId(int questionId)
         {
             return new SuccessDataResult<List<QuestionCategory>>(_questionCategoryDal.GetAll(qc => qc.QuestionId == questionId));
         }
 
+        [SecuredOperation("instructor")]
         public IResult Update(QuestionCategory questionCategory)
         {
             _questionCategoryDal.Update(questionCategory);
-            return new SuccessResult(Messages.QuestionCategoryUpdated);
+            return new SuccessResult(_messages.QuestionCategoryUpdated);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Business.Abstract;
 using Business.BusinessAspects.Autofac;
 using Business.Constants;
+using Business.Services;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
@@ -19,7 +20,7 @@ using System.Transactions;
 
 namespace Business.Concrete
 {
-    public class AuthManager : IAuthService
+    public class AuthManager : BusinessMessagesService, IAuthService
     {
         private IUserService _userService;
         private ITokenHelper _tokenHelper;
@@ -58,7 +59,7 @@ namespace Business.Concrete
                 Status = true
             };
             _userService.Add(user);
-            return new SuccessDataResult<User>(user, Messages.UserRegistered);
+            return new SuccessDataResult<User>(user, _messages.UserRegistered);
         }
 
         public IDataResult<User> Login(UserForLoginDto userForLoginDto)
@@ -66,15 +67,15 @@ namespace Business.Concrete
             var userToCheck = _userService.GetByMail(userForLoginDto.Email).Data;
             if (userToCheck == null)
             {
-                return new ErrorDataResult<User>(null, Messages.UserNotFound);
+                return new ErrorDataResult<User>(null, _messages.UserNotFound);
             }
 
             if (!HashingHelper.VerifyPasswordHash(userForLoginDto.Password, userToCheck.PasswordHash, userToCheck.PasswordSalt))
             {
-                return new ErrorDataResult<User>(Messages.PasswordError);
+                return new ErrorDataResult<User>(_messages.PasswordError);
             }
 
-            return new SuccessDataResult<User>(userToCheck, Messages.SuccessfulLogin);
+            return new SuccessDataResult<User>(userToCheck, _messages.SuccessfulLogin);
         }
 
         public IResult UserExists(string email)
@@ -82,7 +83,7 @@ namespace Business.Concrete
             var result = _userService.GetByMail(email);
             if (result.Data != null)
             {
-                return new ErrorResult(Messages.UserAlreadyExists);
+                return new ErrorResult(_messages.UserAlreadyExists);
             }
             return new SuccessResult();
         }
@@ -91,7 +92,7 @@ namespace Business.Concrete
         {
             var claims = _userService.GetClaims(user);
             var accessToken = _tokenHelper.CreateToken(user, claims);
-            return new SuccessDataResult<AccessToken>(accessToken, Messages.AccessTokenCreated);
+            return new SuccessDataResult<AccessToken>(accessToken, _messages.AccessTokenCreated);
         }
 
         [TransactionScopeAspect]
@@ -130,7 +131,7 @@ namespace Business.Concrete
                 User = userForRegisterDto
             });
 
-            return new SuccessDataResult<User>(user, Messages.UserRegistered);
+            return new SuccessDataResult<User>(user, _messages.UserRegistered);
         }
 
         private void AddClaims(CustomerForRegisterDto customer)
@@ -156,7 +157,7 @@ namespace Business.Concrete
             {
                 claims.Add(new UserOperationClaim
                 {
-                    OperationClaimId = 3,
+                    OperationClaimId = 2002,
                     UserId = customer.Customer.UserId
                 });
             }

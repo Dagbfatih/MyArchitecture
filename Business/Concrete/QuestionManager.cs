@@ -1,6 +1,7 @@
 ﻿using Business.Abstract;
 using Business.BusinessAspects.Autofac;
 using Business.Constants;
+using Business.Services;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Performance;
@@ -21,7 +22,7 @@ using System.Threading;
 
 namespace Business.Concrete
 {
-    public class QuestionManager : IQuestionService
+    public class QuestionManager : BusinessMessagesService, IQuestionService
     {
         IQuestionDal _questionDal;
         IOptionService _optionService;
@@ -42,14 +43,23 @@ namespace Business.Concrete
 
         [ValidationAspect(typeof(QuestionValidator))]
         [CacheRemoveAspect("IQuestionService.Get")]
+        [SecuredOperation("instructor")]
         public IResult Add(Question question)
         {
             _questionDal.Add(question);
-            return new SuccessResult(Messages.QuestionAdded);
+            return new SuccessResult(_messages.QuestionAdded);
+        }
+
+        [CacheRemoveAspect("IQuestionService.Get")]
+        public IDataResult<Question> AddWithId(Question question)
+        {
+            var result=_questionDal.Add(question);
+            return new SuccessDataResult<Question>(result, _messages.QuestionAdded);
         }
 
         [ValidationAspect(typeof(QuestionValidator))]
         [TransactionScopeAspect]
+        [CacheRemoveAspect("IQuestionService.Get")]
         public IResult AddWithDetails(QuestionDetailsDto question)
         {
             var addedQuestion = new Question
@@ -61,10 +71,10 @@ namespace Business.Concrete
                 StarQuestion = question.StarQuestion,
                 UserId = question.UserId,
             };
-            question.QuestionId = _questionDal.Add(addedQuestion).QuestionId;
+            question.QuestionId = this.AddWithId(addedQuestion).Data.QuestionId;
 
             AddRelations(question);
-            return new SuccessResult(Messages.QuestionAdded);
+            return new SuccessResult(_messages.QuestionAdded);
         }
 
 
@@ -92,6 +102,8 @@ namespace Business.Concrete
 
         [ValidationAspect(typeof(QuestionValidator))]
         [TransactionScopeAspect]
+        [SecuredOperation("instructor")]
+        [CacheRemoveAspect("IQuestionService.Get")]
         public IResult UpdateWithDetails(QuestionDetailsDto question)
         {
             var updatedQuestion = new Question
@@ -106,7 +118,7 @@ namespace Business.Concrete
             _questionDal.Update(updatedQuestion);
 
             UpdateRelations(question);
-            return new SuccessResult(Messages.QuestionAdded);
+            return new SuccessResult(_messages.QuestionUpdated);
         }
 
         [TransactionScopeAspect]
@@ -170,11 +182,12 @@ namespace Business.Concrete
 
         [CacheRemoveAspect("IQuestionService.Get")]
         [TransactionScopeAspect]
+        [SecuredOperation("instructor")]
         public IResult Delete(Question question)
         {
             _questionDal.Delete(question);
             DeleteRelations(question);
-            return new SuccessResult(Messages.QuestionDeleted);
+            return new SuccessResult(_messages.QuestionDeleted);
         }
 
         private void DeleteRelations(Question question)
@@ -235,7 +248,7 @@ namespace Business.Concrete
         public IResult Update(Question question)
         {
             _questionDal.Update(question);
-            return new SuccessResult(Messages.QuestionUpdated);
+            return new SuccessResult(_messages.QuestionUpdated);
         }
 
         [TransactionScopeAspect]
@@ -243,7 +256,7 @@ namespace Business.Concrete
         {
             this.Add(question);
             this.Update(question);
-            return new SuccessResult(Messages.QuestionUpdated);
+            return new SuccessResult(_messages.QuestionUpdated);
         }
 
         [CacheAspect(duration: 10)]
@@ -284,6 +297,8 @@ namespace Business.Concrete
             return new SuccessDataResult<List<QuestionDetailsDto>>(_questionDal.GetDetailsByCategory(categoryId));
         }
 
+        [CacheAspect(duration: 10)]
+        [PerformanceAspect(10)]
         public IDataResult<List<QuestionDetailsDto>> GetAllDetailsByPublic()
         {
             return new SuccessDataResult<List<QuestionDetailsDto>>(_questionDal.GetAllDetailsByPublic());

@@ -1,6 +1,9 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constants;
+using Business.Services;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Performance;
 using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.Business;
@@ -16,7 +19,7 @@ using System.Text;
 
 namespace Business.Concrete
 {
-    public class CustomerManager : ICustomerService
+    public class CustomerManager : BusinessMessagesService, ICustomerService
     {
         ICustomerDal _customerDal;
         IUserOperationClaimService _userOperationClaimService;
@@ -39,7 +42,7 @@ namespace Business.Concrete
             }
 
             _customerDal.Add(entity);
-            return new SuccessResult(Messages.CustomerAdded);
+            return new SuccessResult(_messages.CustomerAdded);
         }
 
         private IResult CheckIfUserExists(Customer customer)
@@ -47,7 +50,7 @@ namespace Business.Concrete
             var result = this.GetByUser(customer.UserId);
             if (result.Data != null)
             {
-                return new ErrorResult(Messages.UserAlreadyExists);
+                return new ErrorResult(_messages.UserAlreadyExists);
             }
             return new SuccessResult();
         }
@@ -55,7 +58,7 @@ namespace Business.Concrete
         public IResult Delete(Customer entity)
         {
             _customerDal.Delete(entity);
-            return new SuccessResult(Messages.CustomerDeleted);
+            return new SuccessResult(_messages.CustomerDeleted);
         }
 
         public IDataResult<Customer> Get(int id)
@@ -63,11 +66,14 @@ namespace Business.Concrete
             return new SuccessDataResult<Customer>(_customerDal.Get(c => c.Id == id));
         }
 
+        [SecuredOperation("user, instructor, student", true)]
         public IDataResult<Customer> GetByUser(int userId)
         {
             return new SuccessDataResult<Customer>(_customerDal.Get(c => c.UserId == userId));
         }
 
+        [SecuredOperation("admin")]
+        [PerformanceAspect(5)]
         public IDataResult<List<Customer>> GetAll()
         {
             return new SuccessDataResult<List<Customer>>(_customerDal.GetAll());
@@ -77,10 +83,11 @@ namespace Business.Concrete
         public IResult Update(Customer entity)
         {
             _customerDal.Update(entity);
-            return new SuccessResult(Messages.CustomerUpdated);
+            return new SuccessResult(_messages.CustomerUpdated);
         }
 
         [TransactionScopeAspect]
+        [SecuredOperation("admin")]
         public IResult ConfirmAccount(Customer entity)
         {
             entity.IsConfirmed = true;
@@ -92,9 +99,11 @@ namespace Business.Concrete
                 UserId = entity.UserId
             });
 
-            return new SuccessResult(Messages.AccountConfirmed);
+            return new SuccessResult(_messages.AccountConfirmed);
         }
 
+        [SecuredOperation("user, admin, instructor, student", true)]
+        [PerformanceAspect(5)]
         public IDataResult<CustomerDetailsDto> GetCustomerDetailsByUser(int userId)
         {
             return new SuccessDataResult<CustomerDetailsDto>(_customerDal.GetCustomerDetailsByUser(userId));

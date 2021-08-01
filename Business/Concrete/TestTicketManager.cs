@@ -1,5 +1,7 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constants;
+using Business.Services;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Validation;
 using Core.Utilities.Results.Abstract;
@@ -12,7 +14,7 @@ using System.Text;
 
 namespace Business.Concrete
 {
-    public class TestTicketManager : ITestTicketService
+    public class TestTicketManager :BusinessMessagesService, ITestTicketService
     {
         ITestTicketDal _testTicketDal;
         public TestTicketManager(ITestTicketDal testTicketDal)
@@ -21,16 +23,18 @@ namespace Business.Concrete
         }
 
         [ValidationAspect(typeof(TestTicketValidator))]
+        [SecuredOperation("admin, instructor")]
         public IResult Add(TestTicket entity)
         {
             _testTicketDal.Add(entity);
-            return new SuccessResult(Messages.TestTicketAdded);
+            return new SuccessResult(_messages.TestTicketAdded);
         }
 
+        [SecuredOperation("admin, instructor")]
         public IResult Delete(TestTicket entity)
         {
             _testTicketDal.Delete(entity);
-            return new SuccessResult(Messages.TestTicketDeleted);
+            return new SuccessResult(_messages.TestTicketDeleted);
         }
 
         public IDataResult<TestTicket> Get(int id)
@@ -44,10 +48,11 @@ namespace Business.Concrete
         }
 
         [ValidationAspect(typeof(TestTicketValidator))]
+        [SecuredOperation("admin, instructor")]
         public IResult Update(TestTicket entity)
         {
             _testTicketDal.Update(entity);
-            return new SuccessResult(Messages.TestTicketUpdated);
+            return new SuccessResult(_messages.TestTicketUpdated);
         }
     }
 }

@@ -1,111 +1,143 @@
-﻿using Core.Entities.Concrete;
+﻿using Business.Abstract;
+using Core.Entities.Concrete;
+using Core.Utilities.IoC;
+using Entities.Dtos;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
+using Core.Business.Contexts.TranslationContext;
 
 namespace Business.Constants
 {
-    public static class Messages
+    public class Messages
     {
-        public static string QuestionAdded = "Question Added";
-        public static string QuestionDeleted = "Question Deleted";
-        public static string QuestionUpdated = "Question Updated";
+        ITranslationContext _translationContext;
 
-        public static string OptionAdded = "Option Added";
-        public static string OptionDeleted = "Option Deleted";
-        public static string OptionUpdated = "Option Updated";
+        public Messages()
+        {
+            _translationContext = ServiceTool.ServiceProvider.GetService<ITranslationContext>();
+        }
 
-        public static string CategoryAdded = "Category Added";
-        public static string CategoryDeleted = "Category Deleted";
-        public static string CategoryUpdated = "Category Updated";
+        private string GetMessage(string key)
+        {
+            string result;
+            if (_translationContext.Translates.TryGetValue(key,out result))
+            {
+                return result;
+            }
+            return "unknown";
+        }
 
-        public static string QuestionCategoryAdded = "Question Category Added";
-        public static string QuestionCategoryDeleted = "Question Category Deleted";
-        public static string QuestionCategoryUpdated = "Question Category Updated";
+        public string QuestionAdded { get { return GetMessage("questionAdded"); } }
+        public string QuestionDeleted { get { return GetMessage("questionDeleted"); } }
+        public string QuestionUpdated { get { return GetMessage("questionUpdated"); } }
 
-        public static string OptionsGot = "All Options Got";
-        public static string OptionGot = "Option Got";
-        public static string MustBeOnlyOneCorrectOption = "Sadece Bir Doğru Seçenek Olabilir";
-        public static string MustBeMinOneCategory = "Must Be Minimum One Category";
-        public static string MustBeMinTwoOption = "Minimum İki Seçenek Olmalı";
+        public string OptionAdded { get { return GetMessage("optionAdded"); } }
+        public string OptionDeleted { get { return GetMessage("optionDeleted"); } }
+        public string OptionUpdated { get { return GetMessage("optionUpdated"); } }
 
-        public static string AuthorizationDenied = "Yetki Reddedildi";
-        public static string SuccessfulLogin = "Giriş Başarılı";
-        public static string UserRegistered = "Kayıt Başarılı";
-        public static string PasswordError = "Parola Hatası";
-        public static string UserNotFound = "Kullanıcı Bulunamadı";
-        public static string UserAlreadyExists = "Kullanıcı Mevcut";
-        public static string AccessTokenCreated = "Token Oluşturuldu";
+        public string CategoryAdded { get { return GetMessage("categoryAdded"); } }
+        public string CategoryDeleted { get { return GetMessage("categoryDeleted"); } }
+        public string CategoryUpdated { get { return GetMessage("categoryUpdated"); } }
 
-        public static string TestCreated = "Test Oluşturuldu";
-        public static string TestDeleted = "Test Silindi";
-        public static string TestUpdated = "Test güncellendi";
+        public string QuestionCategoryAdded { get { return GetMessage("questionCategoryAdded"); } }
+        public string QuestionCategoryDeleted { get { return GetMessage("questionCategoryDeleted"); } }
+        public string QuestionCategoryUpdated { get { return GetMessage("questionCategoryUpdated"); } }
 
-        public static string DeleteFailed = "Silme İşlemi Başarısız";
+        public string OptionsGot { get { return GetMessage("optionsGot"); } }
+        public string OptionGot { get { return GetMessage("optionGot"); } }
+        public string MustBeOnlyOneCorrectOption { get { return GetMessage("mustOnlyOneCorrectOption"); } }
+        public string MustBeMinOneCategory { get { return GetMessage("mustMinOneCategory"); } }
+        public string MustBeMinTwoOption { get { return GetMessage("mustMinTwoOption"); } }
 
-        public static string QuestionAddedToTest = "Question Added To Test";
-        public static string QuestionDeletedFromTest = "Question Deleted From Test";
-        public static string QuestionUpdatedForTest = "Question Updated For Test";
+        public string AuthorizationDenied { get { return GetMessage("authorizationDenied"); } }
+        public string SuccessfulLogin { get { return GetMessage("successfulLogin"); } }
+        public string UserRegistered { get { return GetMessage("userRegistered"); } }
+        public string PasswordError { get { return GetMessage("passwordError"); } }
+        public string UserNotFound { get { return GetMessage("userNotFound"); } }
+        public string UserAlreadyExists { get { return GetMessage("userAlreadyExists"); } }
+        public string AccessTokenCreated { get { return GetMessage("accessTokenCreated"); } }
+
+        public string TestCreated { get { return GetMessage("testAdded"); } }
+        public string TestDeleted { get { return GetMessage("testDeleted"); } }
+        public string TestUpdated { get { return GetMessage("testUpdated"); } }
+
+        public string DeleteFailed { get { return GetMessage("deleteFailed"); } }
+
+        public string QuestionAddedToTest { get { return GetMessage("questionAddedToTest"); } }
+        public string QuestionDeletedFromTest { get { return GetMessage("questionDeletedFromTest"); } }
+        public string QuestionUpdatedForTest { get { return GetMessage("questionUpdatedForTest"); } }
 
 
-        public static string UserAdded="Kullanıcı Eklendi";
-        public static string UserDeleted = "Kullanıcı Silindi";
-        public static string UserUpdated = "Kullanıcı Güncellendi";
+        public string UserAdded { get { return GetMessage("userAdded"); } }
+        public string UserDeleted { get { return GetMessage("userDeleted"); } }
+        public string UserUpdated { get { return GetMessage("userUpdated"); } }
 
-        public static string QuestionTicketAdded = "Soru Etiketi Eklendi";
-        public static string QuestionTicketDeleted = "Soru Etiketi Silindi";
-        public static string QuestionTicketUpdated = "Soru Etiketi Güncellendi";
+        public string QuestionTicketAdded { get { return GetMessage("questionTicketAdded"); } }
+        public string QuestionTicketDeleted { get { return GetMessage("questionTicketDeleted"); } }
+        public string QuestionTicketUpdated { get { return GetMessage("questionTicketUpdated"); } }
 
-        public static string TestTicketAdded = "Test Etiketi Eklendi";
-        public static string TestTicketDeleted = "Test Etiketi Silindi";
-        public static string TestTicketUpdated = "Test Etiketi Güncellendi";
+        public string TestTicketAdded { get { return GetMessage("testTicketAdded"); } }
+        public string TestTicketDeleted { get { return GetMessage("testTicketDeleted"); } }
+        public string TestTicketUpdated { get { return GetMessage("testTicketUpdated"); } }
 
-        public static string CustomerAdded = "Müşteri Eklendi";
-        public static string CustomerDeleted = "Müşteri Silindi";
-        public static string CustomerUpdated = "Müşteri Güncellendi";
+        public string CustomerAdded { get { return GetMessage("customerAdded"); } }
+        public string CustomerDeleted { get { return GetMessage("customerDeleted"); } }
+        public string CustomerUpdated { get { return GetMessage("customerUpdated"); } }
 
-        public static string RoleAdded = "Rol Eklendi";
-        public static string RoleDeleted = "Rol Silindi";
-        public static string RoleUpdated = "Rol Güncellendi";
+        public string RoleAdded { get { return GetMessage("roleAdded"); } }
+        public string RoleDeleted { get { return GetMessage("roleDeleted"); } }
+        public string RoleUpdated { get { return GetMessage("roleUpdated"); } }
 
-        public static string CategoryExists="Aynı kategori birden fazla eklenemez";
-        public static string OptionExists="Aynı seçenekten birden fazla eklenemez";
-        public static string QuestionExists = "Aynı soruyu birden fazla eklemeyezsiniz";
-        public static string EmailExists = "E-posta adresi mevcut";
-        public static string ProfileImagesLimited="En fazla bir resminiz olabilir";
+        public string CategoryExists { get { return GetMessage("categoryExists"); } }
+        public string OptionExists { get { return GetMessage("optionExists"); } }
+        public string QuestionExists { get { return GetMessage("questionExists"); } }
+        public string EmailExists { get { return GetMessage("emailExists"); } }
+        public string ProfileImagesLimited { get { return GetMessage("profileImagesLimited"); } }
 
-        public static string ProfileImageAdded="Resim eklendi";
-        public static string ProfileImageDeleted="Resim silindi";
-        public static string ProfileImageUpdated="Resim güncellendi";
+        public string ProfileImageAdded { get { return GetMessage("profileImageAdded"); } }
+        public string ProfileImageDeleted { get { return GetMessage("profileImageDeleted"); } }
+        public string ProfileImageUpdated { get { return GetMessage("profileImageUpdated"); } }
 
-       
+        public string LanguageCreated { get { return GetMessage("languageCreated"); } }
+        public string LanguageDeleted { get { return GetMessage("languageDeleted"); } }
+        public string LanguageUpdated { get { return GetMessage("languageUpdated"); } }
 
-       
+        public string TranslateCreated { get { return GetMessage("translateAdded"); } }
+        public string TranslateDeleted { get { return GetMessage("translateDeleted"); } }
+        public string TranslateUpdated { get { return GetMessage("translateUpdated"); } }
 
-        public static string LanguageCreated="Dil eklendi";
-        public static string LanguageDeleted="Dil silindi";
-        public static string LanguageUpdated = "Dil güncellendi";
+        public string TestResultCreated { get { return GetMessage("testResultCreated"); } }
+        public string TestResultDeleted { get { return GetMessage("testResultDeleted"); } }
+        public string TestResultUpdated { get { return GetMessage("testResultUpdated"); } }
 
-        public static string TranslateCreated = "Çeviri oluşturuldu";
-        public static string TranslateDeleted = "Çeviri eklendi";
-        public static string TranslateUpdated = "Çeviri güncellendi";
+        public string QuestionResultCreated { get { return GetMessage("questionResultCreated"); } }
+        public string QuestionResultDeleted { get { return GetMessage("questionResultDeleted"); } }
+        public string QuestionResultUpdated { get { return GetMessage("questionResultUpdated"); } }
 
-        public static string TestResultCreated = "Test sonucu kaydedildi";
-        public static string TestResultDeleted = "Test sonucu silindi";
-        public static string TestResultUpdated = "Test sonucu güncellendi";
+        public string OperationClaimAdded { get { return GetMessage("operationClaimAdded"); } }
+        public string OperationClaimDeleted { get { return GetMessage("operationClaimDeleted"); } }
+        public string OperationClaimUpdated { get { return GetMessage("operationClaimUpdated"); } }
 
-        public static string QuestionResultCreated = "Soru kaydedildi";
-        public static string QuestionResultDeleted = "Soru silindi";
-        public static string QuestionResultUpdated = "Soru güncellendi";
+        public string UserOperationClaimAdded { get { return GetMessage("userOperationClaimAdded"); } }
+        public string UserOperationClaimDeleted { get { return GetMessage("userOperationClaimDeleted"); } }
+        public string UserOperationClaimUpdated { get { return GetMessage("userOperationClaimUpdated"); } }
 
-        public static string OperationClaimAdded="Operasyon yetkisi oluşturuldu";
-        public static string OperationClaimDeleted= "Operasyon yetkisi silindi";
-        public static string OperationClaimUpdated= "Operasyon yetkisi güncellendi";
+        public string AccountConfirmed { get { return GetMessage("accountConfirmed"); } }
 
-        public static string UserOperationClaimAdded="Kullanıcı yetkisi eklendi";
-        public static string UserOperationClaimDeleted = "Kullanıcı yetkisi silindi";
-        public static string UserOperationClaimUpdated = "Kullanıcı yetkisi güncellendi";
-        internal static string AccountConfirmed;
+        public string MustContainAtLeastNumerical { get { return GetMessage("mustContainAtLeastNumerical"); } }
+        public string MustContainAtLeastUppercaseChar { get { return GetMessage("mustContainAtLeastUppercaseChar"); } }
+        public string MustNotContainAtLeastSpace { get { return GetMessage("mustNotContainSpaces"); } }
+
+        public string TranslateExists { get { return GetMessage("translateExists"); } }
+
+        public string AllQuestionsMustContainSameNumberOption { get { return GetMessage("allQuestionsMustContainSameNumberOption"); } }
+
+        public string MustOneCorrectOption { get { return GetMessage("mustOneCorrectOption"); } }
     }
 }

@@ -1,12 +1,19 @@
 ﻿using Core.DataAccess;
-using Entities.Concrete;
+using Core.Entities.Concrete;
+using Core.Utilities.Results.Abstract;
+using Entities.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace DataAccess.Abstract
 {
-    public interface ITranslateDal:IEntityRepository<Translate>
+    public interface ITranslateDal : IEntityRepository<Translate>
     {
+        List<TranslateDetailsDto> GetAllDetails();
+        List<TranslateDetailsDto> GetAllDetailsByLanguageId(int languageId);
+        List<TranslateDetailsDto> GetAllDetailsByCode(string code);
+        List<Translate> GetAllByCode(string code);
+        Translate GetByKeyAndCode(string key, string code);
     }
 }

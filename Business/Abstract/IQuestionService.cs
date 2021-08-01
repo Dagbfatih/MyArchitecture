@@ -25,6 +25,7 @@ namespace Business.Abstract
         IDataResult<List<QuestionDetailsDto>> GetDetailsByUser(int userId);
         IDataResult<List<QuestionDetailsDto>> GetDetailsByUserWithCategory(int userId, int categoryId);
         IResult UpdateWithDetails(QuestionDetailsDto question);
+        IDataResult<Question> AddWithId(Question question);
 
     }
 }

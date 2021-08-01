@@ -1,5 +1,7 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constants;
+using Business.Services;
 using Core.Business;
 using Core.Utilities.Helpers;
 using Core.Utilities.Results.Abstract;
@@ -15,7 +17,7 @@ using System.Text;
 
 namespace Business.Concrete
 {
-    public class ProfileImageManager : IProfileImageService
+    public class ProfileImageManager : BusinessMessagesService,IProfileImageService
     {
         IProfileImageDal _profileImageDal;
 
@@ -24,6 +26,7 @@ namespace Business.Concrete
             _profileImageDal = profileImageDal;
         }
 
+        [SecuredOperation("user")]
         public IResult Add(ProfileImage entity, IFormFile formFile)
         {
             var result = BusinessRules.Run(CheckImageLimited(entity.UserId));
@@ -35,7 +38,7 @@ namespace Business.Concrete
             entity.ImagePath = FileHelper.Add(formFile);
             entity.Date = DateTime.Now;
             _profileImageDal.Add(entity);
-            return new SuccessResult(Messages.ProfileImageAdded);
+            return new SuccessResult(_messages.ProfileImageAdded);
         }
 
         private IResult CheckImageLimited(int userId)
@@ -45,9 +48,10 @@ namespace Business.Concrete
             {
                 return new ErrorResult();
             }
-            return new SuccessResult(Messages.ProfileImagesLimited);
+            return new SuccessResult(_messages.ProfileImagesLimited);
         }
 
+        [SecuredOperation("user")]
         public IResult Delete(ProfileImage entity)
         {
             var oldpath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\wwwroot")) +
@@ -60,7 +64,7 @@ namespace Business.Concrete
             }
 
             _profileImageDal.Delete(entity);
-            return new SuccessResult(Messages.ProfileImageDeleted);
+            return new SuccessResult(_messages.ProfileImageDeleted);
         }
 
         public IDataResult<ProfileImage> Get(int id)
@@ -73,6 +77,7 @@ namespace Business.Concrete
             return new SuccessDataResult<List<ProfileImage>>(_profileImageDal.GetAll());
         }
 
+        [SecuredOperation("user", true)]
         public IDataResult<ProfileImage> GetImageByUserId(int userId)
         {
             var result = _profileImageDal.Get(i => i.UserId == userId);
@@ -89,6 +94,7 @@ namespace Business.Concrete
             return new SuccessDataResult<ProfileImage>(_profileImageDal.Get(i => i.UserId == userId));
         }
 
+        [SecuredOperation("user")]
         public IResult Update(ProfileImage entity, IFormFile formFile)
         {
             var oldPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\wwwroot")) +
@@ -97,7 +103,7 @@ namespace Business.Concrete
             entity.ImagePath = FileHelper.Update(oldPath, formFile);
             entity.Date = DateTime.Now;
             _profileImageDal.Update(entity);
-            return new SuccessResult(Messages.ProfileImageUpdated);
+            return new SuccessResult(_messages.ProfileImageUpdated);
         }
     }
 }

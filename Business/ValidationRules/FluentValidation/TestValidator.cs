@@ -1,32 +1,25 @@
 ﻿using Business.Constants;
+using Core.Utilities.IoC;
 using Entities.Dtos;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Business.ValidationRules.FluentValidation
 {
     public class TestValidator : AbstractValidator<TestDetailsDto>
     {
+        private readonly Messages _messages;
         public TestValidator()
         {
+            _messages = ServiceTool.ServiceProvider.GetService<Messages>();
+
             RuleFor(t => t.UserId).NotNull().NotEqual(0);
-            RuleFor(t => t.Questions).Must(CheckIfQuestionExistsOnTest).WithMessage(Messages.QuestionExists);
             RuleFor(t => t.TestName).NotEmpty().NotNull();
-        }
-
-        private bool CheckIfQuestionExistsOnTest(List<QuestionDetailsDto> arg)
-        {
-            var questionDuplicate = arg.GroupBy(t => t.QuestionId)
-               .Any(g => g.Count() > 1);
-
-            if (questionDuplicate)
-            {
-                return false;
-            }
-            return true;
+            RuleFor(t => t.TestTime).NotEqual(0).GreaterThan(0);
         }
     }
 }

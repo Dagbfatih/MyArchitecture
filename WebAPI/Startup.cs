@@ -1,3 +1,4 @@
+using Business.DependencyResolvers.BusinessModule;
 using Core.DependencyResolvers;
 using Core.Extensions;
 using Core.Utilities.IoC;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using WebAPI.Extensions.Middlewares;
 
 namespace WebAPI
 {
@@ -47,11 +49,11 @@ namespace WebAPI
                     };
                 });
             services.AddDependencyResolvers(new ICoreModule[] {
-                new CoreModule()
+                new CoreModule(),
+                new BusinessModule()
             });
 
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Swagger Api", Version = "v1" }));
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,7 +68,7 @@ namespace WebAPI
 
             app.ConfigureCustomExceptionMiddleware();
 
-            app.ConfigureCustomRequestUserMiddleware();
+            //app.ConfigureCustomRequestUserMiddleware();     
 
             app.UseStaticFiles();
 
@@ -81,6 +83,8 @@ namespace WebAPI
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.ConfigureCustomTranslateMiddleware();
 
             app.UseEndpoints(endpoints =>
             {

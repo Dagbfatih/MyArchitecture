@@ -1,5 +1,7 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Constants;
+using Business.Services;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Transaction;
@@ -17,25 +19,37 @@ using System.Threading;
 
 namespace Business.Concrete
 {
-    public class TestManager : ITestService
+    public class TestManager : BusinessMessagesService, ITestService
     {
         ITestDal _testDal;
-        ITestQuestionDal _testQuestionDal;
-        public TestManager(ITestDal testDal, ITestQuestionDal testQuestionDal)
+        ITestQuestionService _testQuestionService;
+        public TestManager(ITestDal testDal, ITestQuestionService testQuestionService)
         {
             _testDal = testDal;
-            _testQuestionDal = testQuestionDal;
+            _testQuestionService = testQuestionService;
         }
 
         [CacheRemoveAspect("ITestService.Get")]
+        [SecuredOperation("admin, instructor")]
+        [ValidationAspect(typeof(TestValidator))]
         public IResult Add(Test test)
         {
             _testDal.Add(test);
-            return new SuccessResult(Messages.TestCreated);
+            return new SuccessResult(_messages.TestCreated);
         }
 
-        [ValidationAspect(typeof(TestValidator))]
+        [CacheRemoveAspect("ITestService.Get")]
+        [SecuredOperation("admin, instructor")]
+        public IDataResult<int> AddWithId(Test test)
+        {
+            var result = _testDal.Add(test);
+            return new SuccessDataResult<int>(result.Id, _messages.TestCreated);
+        }
+
+        [ValidationAspect(typeof(TestDetailsDtoValidator))]
         [TransactionScopeAspect]
+        [SecuredOperation("admin, instructor")]
+        [CacheRemoveAspect("ITestService.Get")]
         public IResult AddWithDetails(TestDetailsDto testDetailsDto)
         {
             var addedTest = new Test
@@ -47,18 +61,19 @@ namespace Business.Concrete
                 MixedCategory = testDetailsDto.MixedCategory,
                 UserId = testDetailsDto.UserId
             };
-            testDetailsDto.TestId = _testDal.Add(addedTest).Id;
+            testDetailsDto.TestId = this.AddWithId(addedTest).Data;
 
             AddRelations(testDetailsDto);
             return new SuccessResult();
         }
 
         [TransactionScopeAspect]
+        [CacheRemoveAspect("ITestService.Get")]
         private void AddRelations(TestDetailsDto testDetailsDto)
         {
             foreach (var question in testDetailsDto.Questions)
             {
-                _testQuestionDal.Add(new TestQuestion
+                _testQuestionService.Add(new TestQuestion
                 {
                     TestId = testDetailsDto.TestId,
                     QuestionId = question.QuestionId
@@ -67,14 +82,16 @@ namespace Business.Concrete
         }
 
         [CacheRemoveAspect("ITestService.Get")]
+        [SecuredOperation("admin, instructor")]
         public IResult Delete(Test test)
         {
             DeleteRelations(test);
             _testDal.Delete(test);
-            return new SuccessResult(Messages.TestDeleted);
+            return new SuccessResult(_messages.TestDeleted);
         }
 
         [CacheAspect(duration: 10)]
+        [SecuredOperation("admin")]
         public IDataResult<List<Test>> GetAll()
         {
             return new SuccessDataResult<List<Test>>(_testDal.GetAll());
@@ -87,12 +104,15 @@ namespace Business.Concrete
         }
 
         [CacheRemoveAspect("ITestService.Get")]
+        [SecuredOperation("admin, instructor")]
+        [ValidationAspect(typeof(TestValidator))]
         public IResult Update(Test test)
         {
             _testDal.Update(test);
-            return new SuccessResult(Messages.TestDeleted);
+            return new SuccessResult(_messages.TestDeleted);
         }
 
+        [SecuredOperation("admin")]
         public IDataResult<List<TestDetailsDto>> GetTestDetails()
         {
             return new SuccessDataResult<List<TestDetailsDto>>(_testDal.GetTestDetails());
@@ -103,6 +123,8 @@ namespace Business.Concrete
             return new SuccessDataResult<TestDetailsDto>(_testDal.GetTestDetailsById(id));
         }
 
+        [SecuredOperation("admin, instructor")]
+        [CacheRemoveAspect("ITestService.Get")]
         public IResult DeleteWithDetails(TestDetailsDto testDetailsDto)
         {
             var test = new Test
@@ -118,27 +140,31 @@ namespace Business.Concrete
             _testDal.Delete(test);
             DeleteRelations(test);
 
-            return new SuccessResult(Messages.TestDeleted);
+            return new SuccessResult(_messages.TestDeleted);
         }
 
         private void DeleteRelations(Test test)
         {
-            var deletedTestQuestions = _testQuestionDal.GetAll(tq => tq.TestId == test.Id);
+            var deletedTestQuestions = _testQuestionService.GetAllByTest(test.Id).Data;
             if (deletedTestQuestions != null)
             {
                 foreach (var testQuestion in deletedTestQuestions)
                 {
-                    _testQuestionDal.Delete(testQuestion);
+                    _testQuestionService.Delete(testQuestion);
                 }
             }
         }
 
+        [SecuredOperation("admin, instructor", true)]
         public IDataResult<List<TestDetailsDto>> GetTestDetailsByUser(int userId)
         {
             return new SuccessDataResult<List<TestDetailsDto>>(_testDal.GetTestDetailsByUser(userId));
         }
 
         [TransactionScopeAspect]
+        [SecuredOperation("admin, instructor")]
+        [CacheRemoveAspect("ITestService.Get")]
+        [ValidationAspect(typeof(TestDetailsDtoValidator))]
         public IResult UpdateWithDetails(TestDetailsDto testDetailsDto)
         {
             var test = new Test
@@ -153,19 +179,19 @@ namespace Business.Concrete
             };
             _testDal.Update(test);
             UpdateRelations(testDetailsDto);
-            return new SuccessResult(Messages.TestUpdated);
+            return new SuccessResult(_messages.TestUpdated);
         }
 
         [TransactionScopeAspect]
         private void UpdateRelations(TestDetailsDto test)
         {
-            var defaultQuestions = _testQuestionDal.GetAll(t => t.TestId == test.TestId);
+            var defaultQuestions = _testQuestionService.GetAllByTest(test.TestId).Data;
 
             foreach (var question in defaultQuestions)
             {
                 if (!test.Questions.Any(q => q.QuestionId == question.QuestionId))
                 {
-                    _testQuestionDal.Delete(question);
+                    _testQuestionService.Delete(question);
                 }
             }
 
@@ -177,21 +203,23 @@ namespace Business.Concrete
                     TestId = test.TestId
                 };
 
-                var exists = _testQuestionDal.Get(t => t.QuestionId == updatedTestQuestion.QuestionId && t.TestId == updatedTestQuestion.TestId);
+                var exists = _testQuestionService.
+                    GetAllByTestAndQuestion(updatedTestQuestion.TestId, updatedTestQuestion.QuestionId).Data;
                 if (exists == null)
                 {
-                    _testQuestionDal.Add(updatedTestQuestion);
+                    _testQuestionService.Add(updatedTestQuestion);
                 }
                 else
                 {
                     updatedTestQuestion.Id = exists.Id;
-                    _testQuestionDal.Update(updatedTestQuestion);
+                    _testQuestionService.Update(updatedTestQuestion);
                 }
 
                 Thread.Sleep(100);
             }
         }
 
+        [CacheAspect(10)]
         public IDataResult<List<TestDetailsDto>> GetTestDetailsByPublic()
         {
             return new SuccessDataResult<List<TestDetailsDto>>(_testDal
