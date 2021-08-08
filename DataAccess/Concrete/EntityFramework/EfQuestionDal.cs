@@ -55,7 +55,15 @@ namespace DataAccess.Concrete
                                                 QuestionId = o.QuestionId,
                                                 OptionText = o.OptionText,
                                                 Accuracy = o.Accuracy
-                                            }).ToList()
+                                            }).ToList(),
+
+                                 Branch = (from b in context.Branches
+                                           where q.BranchId == b.Id
+                                           select new Branch
+                                           {
+                                               Id = b.Id,
+                                               Name = b.Name
+                                           }).FirstOrDefault()
                              };
 
 
@@ -111,7 +119,22 @@ namespace DataAccess.Concrete
                                    QuestionId = o.QuestionId,
                                    OptionText = o.OptionText,
                                    Accuracy = o.Accuracy
-                               }).ToList()
+                               }).ToList(),
+                    Branch = (from q in context.Questions
+                              where q.QuestionId == questionId
+                              join b in context.Branches
+                              on q.BranchId equals b.Id
+                              select new Branch
+                              {
+                                  Id = b.Id,
+                                  Name = b.Name
+                              }).FirstOrDefault(),
+                    UserName = (from q in context.Questions
+                                where q.QuestionId == questionId
+                                join u in context.Users
+                                on q.UserId equals u.Id
+                                select new string((u.FirstName + " " + u.LastName).ToCharArray()))
+                                .FirstOrDefault()
                 };
                 return result;
 
@@ -133,7 +156,8 @@ namespace DataAccess.Concrete
                                  BrokenQuestion = q.BrokenQuestion,
                                  StarQuestion = q.StarQuestion,
                                  Privacy = q.StarQuestion,
-                                 UserId = q.UserId
+                                 UserId = q.UserId,
+                                 BranchId = q.BranchId
                              };
                 return result.ToList();
             }
@@ -203,7 +227,14 @@ namespace DataAccess.Concrete
                                                 QuestionId = o.QuestionId,
                                                 OptionText = o.OptionText,
                                                 Accuracy = o.Accuracy
-                                            }).ToList()
+                                            }).ToList(),
+                                 Branch = (from b in context.Branches
+                                           where q.BranchId == b.Id
+                                           select new Branch
+                                           {
+                                               Id = b.Id,
+                                               Name = b.Name
+                                           }).FirstOrDefault()
                              };
 
 
@@ -254,7 +285,14 @@ namespace DataAccess.Concrete
                                                 QuestionId = o.QuestionId,
                                                 OptionText = o.OptionText,
                                                 Accuracy = o.Accuracy
-                                            }).ToList()
+                                            }).ToList(),
+                                 Branch = (from b in context.Branches
+                                           where q.BranchId == b.Id
+                                           select new Branch
+                                           {
+                                               Id = b.Id,
+                                               Name = b.Name
+                                           }).FirstOrDefault()
                              };
 
 
@@ -303,7 +341,14 @@ namespace DataAccess.Concrete
                                                 QuestionId = o.QuestionId,
                                                 OptionText = o.OptionText,
                                                 Accuracy = o.Accuracy
-                                            }).ToList()
+                                            }).ToList(),
+                                 Branch = (from b in context.Branches
+                                           where q.BranchId == b.Id
+                                           select new Branch
+                                           {
+                                               Id = b.Id,
+                                               Name = b.Name
+                                           }).FirstOrDefault()
                              };
 
 
@@ -352,7 +397,14 @@ namespace DataAccess.Concrete
                                                 QuestionId = o.QuestionId,
                                                 OptionText = o.OptionText,
                                                 Accuracy = o.Accuracy
-                                            }).ToList()
+                                            }).ToList(),
+                                 Branch = (from b in context.Branches
+                                           where q.BranchId == b.Id
+                                           select new Branch
+                                           {
+                                               Id = b.Id,
+                                               Name = b.Name
+                                           }).FirstOrDefault()
                              };
 
 

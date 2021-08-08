@@ -11,6 +11,8 @@ namespace Entities.Concrete
         public int UserId { get; set; }
         public int RoleId { get; set; }
         public bool IsConfirmed { get; set; }
+        public int BranchId { get; set; }
+
 
     }
 }

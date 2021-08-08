@@ -76,5 +76,17 @@ namespace WebAPI.Controllers
             }
             return BadRequest(result);
         }
+
+        [HttpGet("getallbyusers")]
+        public IActionResult GetAllByUsers([FromQuery(Name ="userIds")]int[] userIds)
+        {
+            var result = _profileImageService.GetImagesByUsers(userIds);
+
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
     }
 }

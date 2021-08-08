@@ -11,29 +11,17 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RolesController : ControllerBase
+    public class BranchesController : ControllerBase
     {
-        IRoleService _roleService;
-        public RolesController(IRoleService roleService)
+        IBranchService _branchService;
+        public BranchesController(IBranchService branchService)
         {
-            _roleService = roleService;
+            _branchService = branchService;
         }
-
         [HttpPost("add")]
-        public IActionResult Add(Role role)
+        public IActionResult Add(Branch branch)
         {
-            var result = _roleService.Add(role);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpPut("update")]
-        public IActionResult Update(Role role)
-        {
-            var result = _roleService.Update(role);
+            var result = _branchService.Add(branch);
             if (result.Success)
             {
                 return Ok(result);
@@ -42,9 +30,20 @@ namespace WebAPI.Controllers
         }
 
         [HttpDelete("delete")]
-        public IActionResult Delete(Role role)
+        public IActionResult Delete(Branch branch)
         {
-            var result = _roleService.Delete(role);
+            var result = _branchService.Delete(branch);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpPut("update")]
+        public IActionResult Update(Branch branch)
+        {
+            var result = _branchService.Update(branch);
             if (result.Success)
             {
                 return Ok(result);
@@ -55,18 +54,7 @@ namespace WebAPI.Controllers
         [HttpGet("getall")]
         public IActionResult GetAll()
         {
-            var result = _roleService.GetAll();
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpGet("get")]
-        public IActionResult GetAll(int id)
-        {
-            var result = _roleService.Get(id);
+            var result = _branchService.GetAll();
             if (result.Success)
             {
                 return Ok(result);

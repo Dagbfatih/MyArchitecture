@@ -1,19 +1,29 @@
 ﻿using Core.Entities.Concrete;
+using Core.Utilities.IoC;
 using Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DataAccess.Concrete.EntityFramework
 {
     public class SqlContext:DbContext
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public SqlContext()
         {
-            optionsBuilder.UseSqlServer(@"Server=(localdb)\LocalHost;Database=FunnyTestProject;Trusted_Connection=true");
+            Configuration = ServiceTool.ServiceProvider.GetService<IConfiguration>();
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer(Configuration.GetConnectionString("MsSql"));
+            //optionsBuilder.UseSqlServer(Configuration.GetConnectionString("MsSqlForPublish"));
+        }
+
+        protected IConfiguration Configuration { get; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<QuestionCategory> QuestionCategories { get; set; }
@@ -32,6 +42,7 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<Translate> Translates { get; set; }
         public DbSet<TestResult> TestResults { get; set; }
         public DbSet<QuestionResult> QuestionResults { get; set; }
+        public DbSet<Branch> Branches { get; set; }
 
     }
 }

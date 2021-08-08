@@ -5,6 +5,7 @@ using Core.Business.Contexts.TranslationContext;
 using Core.Utilities.IoC;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace Business.DependencyResolvers.BusinessModule
             serviceCollection.AddSingleton<ITranslateService, TranslateManager>();
             serviceCollection.AddSingleton<ITranslateDal, EfTranslateDal>();
             serviceCollection.AddSingleton<Messages>();
+            //serviceCollection.AddSingleton<IConfiguration>();
 
         }
     }

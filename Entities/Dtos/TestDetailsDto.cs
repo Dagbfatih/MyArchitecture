@@ -1,4 +1,5 @@
 ﻿using Core.Entities.Abstract;
+using Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,6 +16,7 @@ namespace Entities.Dtos
         public int TestTime { get; set; }
         public bool MixedCategory { get; set; }
         public bool Privacy { get; set; }
+        public Branch Branch { get; set; }
         public List<QuestionDetailsDto> Questions { get; set; }
 
     }

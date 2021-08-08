@@ -68,7 +68,14 @@ namespace DataAccess.Concrete.EntityFramework
                                                                  OptionText = o.OptionText,
                                                                  Accuracy = o.Accuracy
                                                              }).ToList()
-                                              }).ToList()
+                                              }).ToList(),
+                                 Branch = (from b in context.Branches
+                                           where t.BranchId == b.Id
+                                           select new Branch
+                                           {
+                                               Id = b.Id,
+                                               Name = b.Name
+                                           }).FirstOrDefault()
                              };
 
                 return result.ToList();
@@ -133,7 +140,14 @@ namespace DataAccess.Concrete.EntityFramework
                                                                  OptionText = o.OptionText,
                                                                  Accuracy = o.Accuracy
                                                              }).ToList()
-                                              }).ToList()
+                                              }).ToList(),
+                                 Branch = (from b in context.Branches
+                                           where t.BranchId == b.Id
+                                           select new Branch
+                                           {
+                                               Id = b.Id,
+                                               Name = b.Name
+                                           }).FirstOrDefault()
                              };
 
                 return result.FirstOrDefault();
@@ -198,7 +212,14 @@ namespace DataAccess.Concrete.EntityFramework
                                                                  OptionText = o.OptionText,
                                                                  Accuracy = o.Accuracy
                                                              }).ToList()
-                                              }).ToList()
+                                              }).ToList(),
+                                 Branch = (from b in context.Branches
+                                           where t.BranchId == b.Id
+                                           select new Branch
+                                           {
+                                               Id = b.Id,
+                                               Name = b.Name
+                                           }).FirstOrDefault()
                              };
 
                 return result.ToList();

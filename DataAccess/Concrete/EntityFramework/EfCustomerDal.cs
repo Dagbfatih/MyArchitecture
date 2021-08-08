@@ -21,6 +21,8 @@ namespace DataAccess.Concrete.EntityFramework
                              on c.UserId equals u.Id
                              join r in context.Roles
                              on c.RoleId equals r.Id
+                             join b in context.Branches
+                             on c.BranchId equals b.Id
                              select new CustomerDetailsDto
                              {
                                  CustomerId = c.Id,
@@ -31,7 +33,8 @@ namespace DataAccess.Concrete.EntityFramework
                                  FirstName = u.FirstName,
                                  LastName = u.LastName,
                                  Status = u.Status,
-                                 IsConfirmed = c.IsConfirmed
+                                 IsConfirmed = c.IsConfirmed,
+                                 Branch = b
                              };
 
                 return result.FirstOrDefault();

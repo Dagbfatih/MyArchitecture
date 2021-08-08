@@ -96,6 +96,7 @@ namespace Business.Concrete
         }
 
         [TransactionScopeAspect]
+        [ValidationAspect(typeof(AuthRegisterValidator))]
         public IDataResult<User> RegisterWithCustomer(UserForRegisterDto userForRegisterDto, string password, Customer customer)
         {
             var result = BusinessRules.Run(UserExists(userForRegisterDto.Email));
@@ -140,7 +141,7 @@ namespace Business.Concrete
             {
                 new UserOperationClaim
                 {
-                    OperationClaimId=2,
+                    OperationClaimId = 2,
                     UserId=customer.Customer.UserId
                 }
             };

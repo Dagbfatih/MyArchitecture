@@ -1,6 +1,5 @@
 ﻿using Business.Constants;
 using Castle.DynamicProxy;
-using Core.Business.Services;
 using Core.Extensions;
 using Core.Utilities.Interceptors;
 using Core.Utilities.IoC;
@@ -20,22 +19,29 @@ namespace Business.BusinessAspects.Autofac
     public class SecuredOperation : MethodInterception
     {
         private string[] _roles;
-        private bool _isUserProtection;
         private IHttpContextAccessor _httpContextAccessor;
         private readonly Messages _messages;
+        private bool _isUserProtection;
 
         public SecuredOperation(string roles, bool isUserProtection = false)
         {
             _roles = roles.Split(',');
-            _isUserProtection = isUserProtection;
             _httpContextAccessor = ServiceTool.ServiceProvider.GetService<IHttpContextAccessor>();
             _messages = ServiceTool.ServiceProvider.GetService<Messages>();
+            _isUserProtection = isUserProtection;
         }
 
         protected override void OnBefore(IInvocation invocation)
         {
             var roleClaims = _httpContextAccessor.HttpContext.User.ClaimRoles();
-            var existCustomAuthForUser = CheckCustomUserAuth(invocation);
+
+            if (roleClaims.Contains("admin"))
+            {
+                return;
+            }
+
+            var existCustomAuthForUser = _isUserProtection ?
+                CheckCustomUserAuth(invocation) : new SuccessResult();
 
             if (!existCustomAuthForUser.Success)
             {
@@ -54,18 +60,24 @@ namespace Business.BusinessAspects.Autofac
 
         private IResult CheckCustomUserAuth(IInvocation invocation)
         {
-            if (_isUserProtection)
-            {
-                int requestUserId = (int)invocation.Arguments.GetValue(0);
-                var httpUserId = _httpContextAccessor.HttpContext?.User.Claims
-                    .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
+            var requestUserValue = invocation.Arguments.GetValue(0);
 
-                if (httpUserId == null)
+            if (requestUserValue.GetType() == typeof(int))
+            {
+                var httpUserId = _httpContextAccessor.HttpContext?.User.Claims
+                .FirstOrDefault(x => x.Type.EndsWith("nameidentifier"))?.Value;
+
+                if ((int)requestUserValue != Convert.ToInt32(httpUserId) || httpUserId == null)
                 {
                     return new ErrorResult(_messages.AuthorizationDenied);
                 }
+            }
+            else if (requestUserValue.GetType() == typeof(string))
+            {
+                var httpUserMail = _httpContextAccessor.HttpContext?.User.Claims
+                .FirstOrDefault(x => x.Type.EndsWith("email"))?.Value;
 
-                if (requestUserId != Convert.ToInt32(httpUserId))
+                if ((string)requestUserValue != httpUserMail || httpUserMail == null)
                 {
                     return new ErrorResult(_messages.AuthorizationDenied);
                 }

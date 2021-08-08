@@ -1,4 +1,5 @@
 ﻿using Core.Entities.Abstract;
+using Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,6 +17,7 @@ namespace Entities.Dtos
         public string Email { get; set; }
         public bool Status { get; set; }
         public bool IsConfirmed { get; set; }
+        public Branch Branch { get; set; }
 
     }
 }

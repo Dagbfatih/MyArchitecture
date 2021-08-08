@@ -13,6 +13,7 @@ namespace Entities.Concrete
         public bool BrokenQuestion { get; set; }
         public bool Privacy { get; set; }
         public int UserId { get; set; }
+        public int BranchId { get; set; }
 
     }
 }

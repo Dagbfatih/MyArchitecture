@@ -15,6 +15,7 @@ namespace Entities.Concrete
         public int TestTime { get; set; }
         public bool MixedCategory { get; set; }
         public bool Privacy { get; set; }
+        public int BranchId { get; set; }
 
     }
 }

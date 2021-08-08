@@ -26,6 +26,7 @@ namespace Business.Concrete
             return _userDal.GetClaims(user);
         }
 
+        [SecuredOperation("admin")]
         public IDataResult<List<User>> GetAll()
         {
             return new SuccessDataResult<List<User>>(_userDal.GetAll());
@@ -33,7 +34,8 @@ namespace Business.Concrete
 
         public IDataResult<User> GetByMail(string email)
         {
-            return new SuccessDataResult<User>(_userDal.Get(u => u.Email == email));
+            var result = _userDal.Get(u => u.Email == email);
+            return new SuccessDataResult<User>(result);
         }
 
         public IResult Add(User entity)
@@ -57,7 +59,11 @@ namespace Business.Concrete
 
         public IDataResult<User> Get(int id)
         {
-            return new SuccessDataResult<User>(_userDal.Get(u => u.Id == id));
+            var result = _userDal.Get(u => u.Id == id);
+            result.PasswordHash = null;
+            result.PasswordSalt = null;
+
+            return new SuccessDataResult<User>(result);
         }
 
         public IResult UpdateWithoutPassword(User user)

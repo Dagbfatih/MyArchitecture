@@ -3,11 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Core.Business.Services
+namespace Core.Services.Abstract
 {
-    public interface IRequestUserService
+    public interface ITokenService
     {
         User GetUser();
+        List<string> GetClaims();
         void SetUser(User user);
+        void SetClaims(List<string> claims);
     }
 }

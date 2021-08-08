@@ -1,9 +1,9 @@
 ﻿using Core.Business.Contexts.TranslationContext;
-using Core.Business.Services;
-using Core.Business.Services.Concrete;
 using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Caching.Microsoft;
 using Core.Extensions;
+using Core.Services.Abstract;
+using Core.Services.Concrete;
 using Core.Utilities.Errors;
 using Core.Utilities.IoC;
 using Core.Utilities.Mail;
@@ -27,7 +27,7 @@ namespace Core.DependencyResolvers
             serviceCollection.AddSingleton<ICacheManager, MemoryCacheManager>();
             serviceCollection.AddSingleton<Stopwatch>();
             serviceCollection.AddSingleton<IErrorDetails, DefaultErrorDetails>();
-            serviceCollection.AddSingleton<IRequestUserService, RequestUserManager>();
+            serviceCollection.AddSingleton<ITokenService, TokenService>();
             serviceCollection.AddSingleton<CoreMessages>();
             serviceCollection.AddSingleton<ITranslationContext, TranslationContext>();
             serviceCollection.AddSingleton<IEmailConfiguration, EmailConfiguration>();

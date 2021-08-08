@@ -41,7 +41,7 @@ namespace WebAPI
                     {
                         ValidateIssuer = true,
                         ValidateAudience = true,
-                        ValidateLifetime = false,
+                        ValidateLifetime = true,
                         ValidIssuer = tokenOptions.Issuer,
                         ValidAudience = tokenOptions.Audience,
                         ValidateIssuerSigningKey = true,
@@ -64,11 +64,15 @@ namespace WebAPI
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCors(builder => builder.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod());
+            app.UseCors(builder => builder.WithOrigins("http://localhost:4200",
+                "https://funnytest.somee.com",
+                "https://www.funnytest.somee.com",
+                "http://funnytest.somee.com",
+                "http://www.funnytest.somee.com").AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
             app.ConfigureCustomExceptionMiddleware();
 
-            //app.ConfigureCustomRequestUserMiddleware();     
+            app.ConfigureCustomTokenMiddleware();
 
             app.UseStaticFiles();
 

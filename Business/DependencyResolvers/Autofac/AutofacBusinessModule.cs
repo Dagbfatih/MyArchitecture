@@ -57,6 +57,8 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<EfUserOperationClaimDal>().As<IUserOperationClaimDal>();
             builder.RegisterType<OperationClaimManager>().As<IOperationClaimService>();
             builder.RegisterType<EfOperationClaimDal>().As<IOperationClaimDal>();
+            builder.RegisterType<BranchManager>().As<IBranchService>();
+            builder.RegisterType<EfBranchDal>().As<IBranchDal>();
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 

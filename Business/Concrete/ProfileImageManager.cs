@@ -17,7 +17,7 @@ using System.Text;
 
 namespace Business.Concrete
 {
-    public class ProfileImageManager : BusinessMessagesService,IProfileImageService
+    public class ProfileImageManager : BusinessMessagesService, IProfileImageService
     {
         IProfileImageDal _profileImageDal;
 
@@ -57,7 +57,7 @@ namespace Business.Concrete
             var oldpath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\wwwroot")) +
                  _profileImageDal.Get(i => i.Id == entity.Id).ImagePath;
             var result = BusinessRules.Run(FileHelper.Delete(oldpath));
-            
+
             if (result != null)
             {
                 return result;
@@ -77,7 +77,6 @@ namespace Business.Concrete
             return new SuccessDataResult<List<ProfileImage>>(_profileImageDal.GetAll());
         }
 
-        [SecuredOperation("user", true)]
         public IDataResult<ProfileImage> GetImageByUserId(int userId)
         {
             var result = _profileImageDal.Get(i => i.UserId == userId);
@@ -91,7 +90,7 @@ namespace Business.Concrete
 
                 return new SuccessDataResult<ProfileImage>(profileImage);
             }
-            return new SuccessDataResult<ProfileImage>(_profileImageDal.Get(i => i.UserId == userId));
+            return new SuccessDataResult<ProfileImage>(result);
         }
 
         [SecuredOperation("user")]
@@ -104,6 +103,27 @@ namespace Business.Concrete
             entity.Date = DateTime.Now;
             _profileImageDal.Update(entity);
             return new SuccessResult(_messages.ProfileImageUpdated);
+        }
+
+        public IDataResult<List<ProfileImage>> GetImagesByUsers(params int[] userIds)
+        {
+            List<ProfileImage> result = new List<ProfileImage>();
+
+            foreach (var userId in userIds)
+            {
+                var profileImage = _profileImageDal.Get(p => p.UserId == userId);
+                if (profileImage == null)
+                {
+                    profileImage = new ProfileImage
+                    {
+                        UserId = userId,
+                        ImagePath = @"\Images\defaultProfileImage.png"
+                    };
+                }
+
+                result.Add(profileImage);
+            }
+            return new SuccessDataResult<List<ProfileImage>>(result);
         }
     }
 }

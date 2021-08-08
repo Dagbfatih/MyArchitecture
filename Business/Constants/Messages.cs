@@ -139,5 +139,9 @@ namespace Business.Constants
         public string AllQuestionsMustContainSameNumberOption { get { return GetMessage("allQuestionsMustContainSameNumberOption"); } }
 
         public string MustOneCorrectOption { get { return GetMessage("mustOneCorrectOption"); } }
+
+        public string BranchAdded { get { return GetMessage("branchAdded"); } }
+        public string BranchDeleted { get { return GetMessage("branchDeleted"); } }
+        public string BranchUpdated { get { return GetMessage("branchUpdated"); } }
     }
 }

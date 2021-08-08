@@ -16,7 +16,7 @@ using Core.Utilities.Services.Translate;
 
 namespace Core.Extensions
 {
-    public class ExceptionMiddleware
+    public class ExceptionMiddleware:CoreMessagesService
 	{
 		private RequestDelegate _next;
 		private IErrorDetails _errorDetails;
@@ -52,19 +52,20 @@ namespace Core.Extensions
 			}
 			else if (e.GetType() == typeof(ApplicationException))
 			{
-				_errorDetails = new DefaultErrorDetails(HttpStatusCode.BadRequest);
+				_errorDetails = new DefaultErrorDetails(HttpStatusCode.BadRequest, e.Message);
 			}
 			else if (e.GetType() == typeof(UnauthorizedAccessException))
 			{
-				_errorDetails = new DefaultErrorDetails(HttpStatusCode.Unauthorized);
+				_errorDetails = new DefaultErrorDetails(HttpStatusCode.Unauthorized, e.Message);
 			}
 			else if (e.GetType() == typeof(SecurityException))
 			{
-				_errorDetails = new DefaultErrorDetails(HttpStatusCode.Unauthorized,"Authorization denied");
+				_errorDetails = new DefaultErrorDetails(HttpStatusCode.Unauthorized, e.Message);
             }
 			else
 			{
-				_errorDetails = new DefaultErrorDetails(HttpStatusCode.InternalServerError,"Internal Server Error");
+				_errorDetails = new DefaultErrorDetails(HttpStatusCode.InternalServerError,
+					_coreMessages.InternalServerError);
 			}
 
             await httpContext.Response.WriteAsync(_errorDetails.ToString());

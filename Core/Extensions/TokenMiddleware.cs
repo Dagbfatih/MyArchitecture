@@ -1,5 +1,6 @@
-﻿using Core.Business.Services;
-using Core.Entities.Concrete;
+﻿using Core.Entities.Concrete;
+using Core.Services.Concrete;
+using Core.Utilities.IoC;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -7,24 +8,28 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Core.Services.Abstract;
 
 namespace Core.Extensions
 {
-    public class RequestUserMiddleware
+    public class TokenMiddleware : IMiddleware
     {
         private RequestDelegate _next;
-        private IRequestUserService _requestUserService;
-        public RequestUserMiddleware(RequestDelegate next, IRequestUserService requestUserService)
+        private ITokenService _tokenService;
+
+        public TokenMiddleware(RequestDelegate next, ITokenService tokenService)
         {
             _next = next;
-            _requestUserService = requestUserService;
+            _tokenService = tokenService;
         }
 
         public async Task InvokeAsync(HttpContext httpContext)
         {
             var claims = httpContext.User.Identities.First().Claims.ToList();
             var user = new User();
-            if (claims.Count>0)
+
+            if (claims.Count > 0)
             {
                 user = new User
                 {
@@ -40,10 +45,10 @@ namespace Core.Extensions
             {
                 user = null;
             }
-            _requestUserService.SetUser(user);
+
+            _tokenService.SetUser(user);
 
             await _next(httpContext);
         }
-
     }
 }

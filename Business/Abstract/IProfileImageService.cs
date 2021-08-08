@@ -15,5 +15,6 @@ namespace Business.Abstract
         IDataResult<List<ProfileImage>> GetAll();
         IDataResult<ProfileImage> Get(int id);
         IDataResult<ProfileImage> GetImageByUserId(int userId);
+        IDataResult<List<ProfileImage>> GetImagesByUsers(params int[] userId);
     }
 }
