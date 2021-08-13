@@ -16,13 +16,11 @@ namespace DataAccess.Concrete.EntityFramework
             using (SqlContext context = new SqlContext())
             {
                 var result = from c in context.Customers
-                             where c.UserId == userId
                              join u in context.Users
                              on c.UserId equals u.Id
                              join r in context.Roles
                              on c.RoleId equals r.Id
-                             join b in context.Branches
-                             on c.BranchId equals b.Id
+                             where c.UserId == userId
                              select new CustomerDetailsDto
                              {
                                  CustomerId = c.Id,
@@ -34,7 +32,17 @@ namespace DataAccess.Concrete.EntityFramework
                                  LastName = u.LastName,
                                  Status = u.Status,
                                  IsConfirmed = c.IsConfirmed,
-                                 Branch = b
+                                 Branch = c.BranchId == 0 ? new Branch
+                                 {
+                                     Id = 0,
+                                     Name = ""
+                                 } : (from b in context.Branches
+                                      where c.BranchId == b.Id
+                                      select new Branch
+                                      {
+                                          Id = b.Id,
+                                          Name = b.Name
+                                      }).FirstOrDefault()
                              };
 
                 return result.FirstOrDefault();

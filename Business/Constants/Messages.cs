@@ -143,5 +143,7 @@ namespace Business.Constants
         public string BranchAdded { get { return GetMessage("branchAdded"); } }
         public string BranchDeleted { get { return GetMessage("branchDeleted"); } }
         public string BranchUpdated { get { return GetMessage("branchUpdated"); } }
+
+        public string RoleIdNotNull { get { return GetMessage("roleIdNotNull"); } }
     }
 }
