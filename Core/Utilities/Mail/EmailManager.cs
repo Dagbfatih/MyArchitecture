@@ -1,4 +1,5 @@
-﻿using Core.Utilities.Messages;
+﻿using Core.Aspects.Autofac.Performance;
+using Core.Utilities.Messages;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
 using Core.Utilities.Services.Translate;
@@ -24,6 +25,7 @@ namespace Core.Utilities.Mail
             _configuration = configuration;
         }
 
+        [PerformanceAspect(5)]
         public IResult Send(EmailMessage emailMessage)
         {
             var message = new MimeMessage();

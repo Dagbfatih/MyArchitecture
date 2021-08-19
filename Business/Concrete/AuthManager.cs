@@ -26,16 +26,19 @@ namespace Business.Concrete
         private ITokenHelper _tokenHelper;
         private ICustomerService _customerService;
         private IUserOperationClaimService _userOperationClaimService;
+        private IOperationClaimService _operationClaimService;
 
         public AuthManager(IUserService userService,
             ITokenHelper tokenHelper,
             ICustomerService customerService,
-            IUserOperationClaimService userOperationClaimService)
+            IUserOperationClaimService userOperationClaimService,
+            IOperationClaimService operationClaimService)
         {
             _userService = userService;
             _tokenHelper = tokenHelper;
             _customerService = customerService;
             _userOperationClaimService = userOperationClaimService;
+            _operationClaimService = operationClaimService;
         }
 
         [ValidationAspect(typeof(AuthRegisterValidator))]
@@ -137,12 +140,14 @@ namespace Business.Concrete
 
         private void AddClaims(CustomerForRegisterDto customer)
         {
+            var existClaims = _operationClaimService.GetAll().Data;
+
             List<UserOperationClaim> claims = new List<UserOperationClaim>()
             {
                 new UserOperationClaim
                 {
-                    OperationClaimId = 2,
-                    UserId=customer.Customer.UserId
+                    OperationClaimId = existClaims.FirstOrDefault(c => c.Name == "user").Id,
+                    UserId = customer.Customer.UserId
                 }
             };
 
@@ -150,7 +155,7 @@ namespace Business.Concrete
             {
                 claims.Add(new UserOperationClaim
                 {
-                    OperationClaimId = 4,
+                    OperationClaimId = existClaims.FirstOrDefault(c => c.Name == "student").Id,
                     UserId = customer.Customer.UserId
                 });
             }
@@ -158,7 +163,7 @@ namespace Business.Concrete
             {
                 claims.Add(new UserOperationClaim
                 {
-                    OperationClaimId = 2002,
+                    OperationClaimId = existClaims.FirstOrDefault(c => c.Name == "notConfirmedInstructor").Id,
                     UserId = customer.Customer.UserId
                 });
             }

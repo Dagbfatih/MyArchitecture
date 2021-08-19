@@ -10,6 +10,7 @@ namespace Entities.Concrete
         public int Id { get; set; }
         public int UserId { get; set; }
         public int TestId { get; set; }
+        public int FinishDate { get; set; }
 
     }
 }
