@@ -108,5 +108,20 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<CustomerDetailsDto>(_customerDal.GetCustomerDetailsByUser(userId));
         }
+
+        public IDataResult<List<CustomerDetailsDto>> GetAllByUserIds(params int[] userIds)
+        {
+            List<CustomerDetailsDto> result = new List<CustomerDetailsDto>();
+
+            foreach (var userId in userIds)
+            {
+                var customer = GetCustomerDetailsByUser(userId).Data;
+                if (customer != null)
+                {
+                    result.Add(customer);
+                }
+            }
+            return new SuccessDataResult<List<CustomerDetailsDto>>(result);
+        }
     }
 }

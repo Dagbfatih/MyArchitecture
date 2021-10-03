@@ -11,19 +11,19 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class QuestionCategoriesController : ControllerBase
+    public class LessonsController : ControllerBase
     {
-        IQuestionCategoryService _questionCategoryService;
+        private readonly ILessonService _lessonService;
 
-        public QuestionCategoriesController(IQuestionCategoryService questionCategoryService)
+        public LessonsController(ILessonService lessonService)
         {
-            _questionCategoryService = questionCategoryService;
+            _lessonService = lessonService;
         }
 
         [HttpPost("add")]
-        public IActionResult Add(QuestionCategory questionCategory)
+        public IActionResult Add(Lesson lesson)
         {
-            var result = _questionCategoryService.Add(questionCategory);
+            var result = _lessonService.Add(lesson);
             if (result.Success)
             {
                 return Ok(result);
@@ -31,10 +31,10 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpPost("update")]
-        public IActionResult Update(QuestionCategory questionCategory)
+        [HttpPut("update")]
+        public IActionResult Update(Lesson lesson)
         {
-            var result = _questionCategoryService.Update(questionCategory);
+            var result = _lessonService.Update(lesson);
             if (result.Success)
             {
                 return Ok(result);
@@ -45,7 +45,7 @@ namespace WebAPI.Controllers
         [HttpGet("getall")]
         public IActionResult GetAll()
         {
-            var result = _questionCategoryService.GetAll();
+            var result = _lessonService.GetAll();
             if (result.Success)
             {
                 return Ok(result);
@@ -54,11 +54,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpDelete("delete")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(Lesson lesson)
         {
-            QuestionCategory questionCategory = _questionCategoryService.Get(id).Data;
-            var result = _questionCategoryService.Delete(questionCategory);
-
+            var result = _lessonService.Delete(lesson);
             if (result.Success)
             {
                 return Ok(result);

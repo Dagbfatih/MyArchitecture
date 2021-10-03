@@ -1,6 +1,7 @@
 ﻿using Business.Abstract;
 using Entities.Concrete;
 using Entities.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -109,6 +110,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("gettestdetailsbypublic")]
+        [AllowAnonymous]
         public IActionResult GetTestDetailsByPublic()
         {
             var result = _testService.GetTestDetailsByPublic();

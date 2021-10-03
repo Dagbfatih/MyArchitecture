@@ -5,6 +5,7 @@ using Core.Extensions;
 using Core.Services.Abstract;
 using Core.Services.Concrete;
 using Core.Utilities.Errors;
+using Core.Utilities.Helpers;
 using Core.Utilities.IoC;
 using Core.Utilities.Mail;
 using Core.Utilities.Messages;
@@ -14,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
 namespace Core.DependencyResolvers
@@ -28,7 +30,9 @@ namespace Core.DependencyResolvers
             serviceCollection.AddSingleton<Stopwatch>();
             serviceCollection.AddSingleton<IErrorDetails, DefaultErrorDetails>();
             serviceCollection.AddSingleton<ITokenService, TokenService>();
+            serviceCollection.AddSingleton<RefreshTokenHelper>();
             serviceCollection.AddSingleton<CoreMessages>();
+            serviceCollection.AddSingleton<JwtSecurityTokenHandler>();
             serviceCollection.AddSingleton<ITranslationContext, TranslationContext>();
             serviceCollection.AddSingleton<IEmailConfiguration, EmailConfiguration>();
             serviceCollection.AddSingleton<IEmailService, EmailManager>();

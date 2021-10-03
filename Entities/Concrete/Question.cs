@@ -13,7 +13,9 @@ namespace Entities.Concrete
         public bool BrokenQuestion { get; set; }
         public bool Privacy { get; set; }
         public int UserId { get; set; }
-        public int BranchId { get; set; }
+        public int LessonId { get; set; }
+        public int SubjectId { get; set; }
+        public int DifficultyLevel { get; set; }
 
     }
 }

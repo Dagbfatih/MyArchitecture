@@ -5,10 +5,11 @@ using System.Text;
 
 namespace Entities.Concrete
 {
-    public class QuestionCategory:IEntity
+    public class GradeLevel:IEntity
     {
         public int Id { get; set; }
-        public int QuestionId { get; set; }
-        public int CategoryId { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+
     }
 }

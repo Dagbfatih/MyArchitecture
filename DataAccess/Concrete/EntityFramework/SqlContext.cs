@@ -10,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DataAccess.Concrete.EntityFramework
 {
-    public class SqlContext:DbContext
+    public class SqlContext : DbContext
     {
         public SqlContext()
         {
@@ -26,7 +26,6 @@ namespace DataAccess.Concrete.EntityFramework
         protected IConfiguration Configuration { get; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<QuestionCategory> QuestionCategories { get; set; }
         public DbSet<Option> Options { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<OperationClaim> OperationClaims { get; set; }
@@ -43,6 +42,10 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<TestResult> TestResults { get; set; }
         public DbSet<QuestionResult> QuestionResults { get; set; }
         public DbSet<Branch> Branches { get; set; }
+        public DbSet<GradeLevel> GradeLevels { get; set; }
+        public DbSet<Lesson> Lessons { get; set; }
+        public DbSet<Subject> Subjects { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     }
 }

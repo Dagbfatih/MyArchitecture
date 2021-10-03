@@ -6,16 +6,17 @@ using System.Text;
 
 namespace Entities.Concrete
 {
-    public class Test:IEntity
+    public class Test : IEntity
     {
         public int Id { get; set; }
         public int UserId { get; set; }
-        public string TestName { get; set; }
-        public string TestNotes { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
         public int TestTime { get; set; }
-        public bool MixedCategory { get; set; }
         public bool Privacy { get; set; }
-        public int BranchId { get; set; }
+        public int LessonId { get; set; }
+        public DateTime Date { get; set; }
+        public int DifficultyLevel { get; set; }
 
     }
 }

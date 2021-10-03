@@ -15,6 +15,11 @@ namespace Business.Abstract
         IDataResult<User> Login(UserForLoginDto userForLoginDto);
         IResult UserExists(string email);
         IDataResult<AccessToken> CreateAccessToken(User user);
+        IDataResult<RefreshToken> CreateRefreshToken(User user);
+        IDataResult<Token> CreateToken(User user);
         IDataResult<User> RegisterWithCustomer(UserForRegisterDto userForRegisterDto, string password, Customer customer);
+        IResult RefreshTokenIsValid(string token);
+        IResult RefreshTokenExpired(string token);
+        IDataResult<RefreshToken> RefreshToken(User user);
     }
 }

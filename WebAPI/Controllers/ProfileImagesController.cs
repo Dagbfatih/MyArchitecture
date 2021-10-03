@@ -1,5 +1,6 @@
 ﻿using Business.Abstract;
 using Entities.Concrete;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,6 +12,7 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class ProfileImagesController : ControllerBase
     {
         IProfileImageService _profileImageService;
@@ -66,9 +68,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("getbyuserid")]
-        public IActionResult GetByCarId(int carId)
+        public IActionResult GetByUserId(int userId)
         {
-            var result = _profileImageService.GetImageByUserId(carId);
+            var result = _profileImageService.GetImageByUserId(userId);
 
             if (result.Success)
             {

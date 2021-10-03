@@ -85,5 +85,20 @@ namespace Business.Concrete
         {
             return _userDal.Add(user).Id;
         }
+
+        public IDataResult<List<User>> GetAllByIds(params int[] userIds)
+        {
+            List<User> result = new List<User>();
+
+            foreach (var userId in userIds)
+            {
+                var user = Get(userId).Data;
+                if (user != null)
+                {
+                    result.Add(user);
+                }
+            }
+            return new SuccessDataResult<List<User>>(result);
+        }
     }
 }

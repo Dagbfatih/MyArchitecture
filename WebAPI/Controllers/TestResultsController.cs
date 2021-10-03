@@ -14,7 +14,7 @@ namespace WebAPI.Controllers
     [ApiController]
     public class TestResultsController : ControllerBase
     {
-        ITestResultService _testResultService;
+        private readonly ITestResultService _testResultService;
 
         public TestResultsController(ITestResultService testResultService)
         {

@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Business.ValidationRules.FluentValidation
 {
-    public class TestDetailsDtoValidator:AbstractValidator<TestDetailsDto>
+    public class TestDetailsDtoValidator : AbstractValidator<TestDetailsDto>
     {
         private readonly Messages _messages;
 
@@ -18,9 +18,9 @@ namespace Business.ValidationRules.FluentValidation
         {
             _messages = ServiceTool.ServiceProvider.GetService<Messages>();
 
-            RuleFor(t => t.UserId).NotNull().NotEqual(0);
+            RuleFor(t => t.Test.UserId).NotNull().NotEqual(0);
             RuleFor(t => t.Questions).Must(CheckIfQuestionExistsOnTest).WithMessage(_messages.QuestionExists);
-            RuleFor(t => t.TestName).NotEmpty().NotNull();
+            RuleFor(t => t.Test.Title).NotEmpty().NotNull();
             RuleFor(t => t.Questions).Must(CheckOptionNumbersIsDifferentForEach).WithMessage(_messages.AllQuestionsMustContainSameNumberOption);
         }
 
@@ -31,7 +31,7 @@ namespace Business.ValidationRules.FluentValidation
 
         private bool CheckIfQuestionExistsOnTest(List<QuestionDetailsDto> arg)
         {
-            var questionDuplicate = arg.GroupBy(t => t.QuestionId)
+            var questionDuplicate = arg.GroupBy(t => t.Question.QuestionId)
                .Any(g => g.Count() > 1);
 
             if (questionDuplicate)

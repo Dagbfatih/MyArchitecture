@@ -11,6 +11,7 @@ namespace Business.Abstract
         int AddWithId(User user);
         List<OperationClaim> GetClaims(User user);
         IDataResult<User> GetByMail(string email);
+        IDataResult<List<User>> GetAllByIds(params int[] userIds);
         IResult UpdateWithoutPassword(User user);
     }
 }

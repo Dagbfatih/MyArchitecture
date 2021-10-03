@@ -2,15 +2,19 @@
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.Dtos;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 
 namespace DataAccess.Concrete.EntityFramework
 {
     public class EfTestResultDal : EfEntityRepositoryBase<TestResult, SqlContext>, ITestResultDal
     {
+        IQuestionResultDal _questionResultDal;
+        public EfTestResultDal(IQuestionResultDal questionResultDal)
+        {
+            _questionResultDal = questionResultDal;
+        }
+
         public List<TestResultDetailsDto> GetAllDetails()
         {
             using (SqlContext context = new SqlContext())
@@ -22,63 +26,7 @@ namespace DataAccess.Concrete.EntityFramework
                              {
                                  ResultDetails = tr,
                                  TestDetails = t,
-                                 QuestionResults = (from qr in context.QuestionResults
-                                                    where qr.TestResultId == tr.Id
-                                                    select new QuestionResultDetailsDto
-                                                    {
-                                                        QuestionId = qr.QuestionId,
-                                                        TestResultId = qr.TestResultId,
-                                                        Accuracy = qr.Accuracy,
-                                                        CorrectOptionId = qr.CorrectOptionId,
-                                                        QuestionResultId = qr.Id,
-                                                        SelectedOptionId = qr.SelectedOptionId,
-                                                        Question = (new QuestionDetailsDto
-                                                        {
-                                                            QuestionId = (from q in context.Questions
-                                                                          where q.QuestionId == qr.QuestionId
-                                                                          select q.QuestionId).FirstOrDefault(),
-
-                                                            Categories = (from c in context.Categories
-                                                                          join qc in context.QuestionCategories
-                                                                          on qr.QuestionId equals qc.QuestionId
-                                                                          where qc.CategoryId == c.CategoryId
-                                                                          select new Category
-                                                                          {
-                                                                              CategoryId = c.CategoryId,
-                                                                              CategoryName = c.CategoryName
-                                                                          }).ToList(),
-
-                                                            QuestionText = (from q in context.Questions
-                                                                            where q.QuestionId == qr.QuestionId
-                                                                            select q.QuestionText).FirstOrDefault(),
-
-                                                            StarQuestion = (from q in context.Questions
-                                                                            where q.QuestionId == qr.QuestionId
-                                                                            select q.StarQuestion).FirstOrDefault(),
-
-                                                            BrokenQuestion = (from q in context.Questions
-                                                                              where q.QuestionId == qr.QuestionId
-                                                                              select q.BrokenQuestion).FirstOrDefault(),
-
-                                                            Privacy = (from q in context.Questions
-                                                                       where q.QuestionId == qr.QuestionId
-                                                                       select q.Privacy).FirstOrDefault(),
-
-                                                            UserId = (from q in context.Questions
-                                                                      where q.QuestionId == qr.QuestionId
-                                                                      select q.UserId).FirstOrDefault(),
-
-                                                            Options = (from o in context.Options
-                                                                       where qr.QuestionId == o.QuestionId
-                                                                       select new Option
-                                                                       {
-                                                                           Id = o.Id,
-                                                                           QuestionId = o.QuestionId,
-                                                                           OptionText = o.OptionText,
-                                                                           Accuracy = o.Accuracy
-                                                                       }).ToList()
-                                                        })
-                                                    }).ToList()
+                                 QuestionResults = _questionResultDal.GetAllDetailsByTestResultId(tr.Id)
                              };
                 return result.ToList();
             }
@@ -91,68 +39,16 @@ namespace DataAccess.Concrete.EntityFramework
                 var result = from tr in context.TestResults
                              join t in context.Tests
                              on tr.TestId equals t.Id
+                             join qr in context.QuestionResults
+                             on tr.Id equals qr.TestResultId
+                             join q in context.Questions
+                             on qr.QuestionId equals q.QuestionId
                              where tr.UserId == userId
                              select new TestResultDetailsDto
                              {
                                  ResultDetails = tr,
                                  TestDetails = t,
-                                 QuestionResults = (from qr in context.QuestionResults
-                                                    where qr.TestResultId == tr.Id
-                                                    select new QuestionResultDetailsDto
-                                                    {
-                                                        QuestionId = qr.QuestionId,
-                                                        TestResultId = qr.TestResultId,
-                                                        Accuracy = qr.Accuracy,
-                                                        CorrectOptionId = qr.CorrectOptionId,
-                                                        QuestionResultId = qr.Id,
-                                                        SelectedOptionId = qr.SelectedOptionId,
-                                                        Question = (new QuestionDetailsDto
-                                                        {
-                                                            QuestionId = (from q in context.Questions
-                                                                          where q.QuestionId == qr.QuestionId
-                                                                          select q.QuestionId).FirstOrDefault(),
-
-                                                            Categories = (from c in context.Categories
-                                                                          join qc in context.QuestionCategories
-                                                                          on qr.QuestionId equals qc.QuestionId
-                                                                          where qc.CategoryId == c.CategoryId
-                                                                          select new Category
-                                                                          {
-                                                                              CategoryId = c.CategoryId,
-                                                                              CategoryName = c.CategoryName
-                                                                          }).ToList(),
-
-                                                            QuestionText = (from q in context.Questions
-                                                                            where q.QuestionId == qr.QuestionId
-                                                                            select q.QuestionText).FirstOrDefault(),
-
-                                                            StarQuestion = (from q in context.Questions
-                                                                            where q.QuestionId == qr.QuestionId
-                                                                            select q.StarQuestion).FirstOrDefault(),
-
-                                                            BrokenQuestion = (from q in context.Questions
-                                                                              where q.QuestionId == qr.QuestionId
-                                                                              select q.BrokenQuestion).FirstOrDefault(),
-
-                                                            Privacy = (from q in context.Questions
-                                                                       where q.QuestionId == qr.QuestionId
-                                                                       select q.Privacy).FirstOrDefault(),
-
-                                                            UserId = (from q in context.Questions
-                                                                      where q.QuestionId == qr.QuestionId
-                                                                      select q.UserId).FirstOrDefault(),
-
-                                                            Options = (from o in context.Options
-                                                                       where qr.QuestionId == o.QuestionId
-                                                                       select new Option
-                                                                       {
-                                                                           Id = o.Id,
-                                                                           QuestionId = o.QuestionId,
-                                                                           OptionText = o.OptionText,
-                                                                           Accuracy = o.Accuracy
-                                                                       }).ToList()
-                                                        })
-                                                    }).ToList()
+                                 QuestionResults = (_questionResultDal.GetAllDetailsByTestResultId(tr.Id))
                              };
                 return result.ToList();
             }
@@ -174,58 +70,31 @@ namespace DataAccess.Concrete.EntityFramework
                                                     where qr.TestResultId == tr.Id
                                                     select new QuestionResultDetailsDto
                                                     {
-                                                        QuestionId = qr.QuestionId,
-                                                        TestResultId = qr.TestResultId,
-                                                        Accuracy = qr.Accuracy,
-                                                        CorrectOptionId = qr.CorrectOptionId,
-                                                        QuestionResultId = qr.Id,
-                                                        SelectedOptionId = qr.SelectedOptionId,
-                                                        Question = (new QuestionDetailsDto
-                                                        {
-                                                            QuestionId = (from q in context.Questions
-                                                                          where q.QuestionId == qr.QuestionId
-                                                                          select q.QuestionId).FirstOrDefault(),
+                                                        QuestionResult = qr,
+                                                        Question = (from q in context.Questions
+                                                                    where qr.QuestionId == q.QuestionId
+                                                                    select new QuestionDetailsDto
+                                                                    {
 
-                                                            Categories = (from c in context.Categories
-                                                                          join qc in context.QuestionCategories
-                                                                          on qr.QuestionId equals qc.QuestionId
-                                                                          where qc.CategoryId == c.CategoryId
-                                                                          select new Category
-                                                                          {
-                                                                              CategoryId = c.CategoryId,
-                                                                              CategoryName = c.CategoryName
-                                                                          }).ToList(),
+                                                                        Question = q,
+                                                                        UserName = (from u in context.Users
+                                                                                    where q.UserId == u.Id
+                                                                                    select u.FirstName + " " + u.LastName).FirstOrDefault(),
 
-                                                            QuestionText = (from q in context.Questions
-                                                                            where q.QuestionId == qr.QuestionId
-                                                                            select q.QuestionText).FirstOrDefault(),
 
-                                                            StarQuestion = (from q in context.Questions
-                                                                            where q.QuestionId == qr.QuestionId
-                                                                            select q.StarQuestion).FirstOrDefault(),
 
-                                                            BrokenQuestion = (from q in context.Questions
-                                                                              where q.QuestionId == qr.QuestionId
-                                                                              select q.BrokenQuestion).FirstOrDefault(),
 
-                                                            Privacy = (from q in context.Questions
-                                                                       where q.QuestionId == qr.QuestionId
-                                                                       select q.Privacy).FirstOrDefault(),
 
-                                                            UserId = (from q in context.Questions
-                                                                      where q.QuestionId == qr.QuestionId
-                                                                      select q.UserId).FirstOrDefault(),
-
-                                                            Options = (from o in context.Options
-                                                                       where qr.QuestionId == o.QuestionId
-                                                                       select new Option
-                                                                       {
-                                                                           Id = o.Id,
-                                                                           QuestionId = o.QuestionId,
-                                                                           OptionText = o.OptionText,
-                                                                           Accuracy = o.Accuracy
-                                                                       }).ToList()
-                                                        })
+                                                                        Options = (from o in context.Options
+                                                                                   where qr.QuestionId == o.QuestionId
+                                                                                   select new Option
+                                                                                   {
+                                                                                       Id = o.Id,
+                                                                                       QuestionId = o.QuestionId,
+                                                                                       OptionText = o.OptionText,
+                                                                                       Accuracy = o.Accuracy
+                                                                                   }).ToList()
+                                                                    }).FirstOrDefault()
                                                     }).ToList()
                              };
                 return result.FirstOrDefault();

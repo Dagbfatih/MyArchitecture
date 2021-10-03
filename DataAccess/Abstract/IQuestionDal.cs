@@ -13,10 +13,7 @@ namespace DataAccess.Abstract
         List<QuestionDetailsDto> GetAllDetailsByPublic();
         List<QuestionDetailsDto> GetQuestionDetails();
         QuestionDetailsDto GetQuestionDetailsById(int questionId);
-        List<Question> GetQuestionsByCategoryId(int categoryId);
-        QuestionCategoriesDto GetQuestionCategories(int questionId);
         List<QuestionDetailsDto> GetDetailsByQuestionText(string text);
-        List<QuestionDetailsDto> GetDetailsByCategory(int categoryId);
         List<QuestionDetailsDto> GetQuestionDetailsByUser(int userId);
 
     }

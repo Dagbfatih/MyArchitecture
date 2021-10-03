@@ -1,5 +1,6 @@
 ﻿using Business.Abstract;
 using Entities.Concrete;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -45,6 +46,19 @@ namespace WebAPI.Controllers
         public IActionResult GetAll()
         {
             var result = _customerService.GetAll();
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("getallbyuserids")]
+        [AllowAnonymous]
+        public IActionResult GetAllByIds([FromQuery(Name = "userIds")] int[] userIds)
+        {
+            var result = _customerService.GetAllByUserIds(userIds);
+
             if (result.Success)
             {
                 return Ok(result);

@@ -13,7 +13,7 @@ namespace WebAPI.Controllers
     [ApiController]
     public class OptionsController : ControllerBase
     {
-        IOptionService _optionService;
+        private readonly IOptionService _optionService;
         public OptionsController(IOptionService optionService)
         {
             _optionService = optionService;

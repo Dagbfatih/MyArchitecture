@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Core.Entities.Concrete
 {
-    public class Translate:IEntity
+    public class Translate : IEntity
     {
         public int Id { get; set; }
         public string Key { get; set; }

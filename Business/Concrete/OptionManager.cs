@@ -15,9 +15,10 @@ using System.Text;
 
 namespace Business.Concrete
 {
-    public class OptionManager : BusinessMessagesService,IOptionService
+    public class OptionManager : BusinessMessagesService, IOptionService
     {
-        IOptionDal _optionDal;
+        private readonly IOptionDal _optionDal;
+
         public OptionManager(IOptionDal optionDal)
         {
             _optionDal = optionDal;

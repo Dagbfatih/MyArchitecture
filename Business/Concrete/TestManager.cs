@@ -1,6 +1,5 @@
 ﻿using Business.Abstract;
 using Business.BusinessAspects.Autofac;
-using Business.Constants;
 using Business.Services;
 using Business.ValidationRules.FluentValidation;
 using Core.Aspects.Autofac.Caching;
@@ -11,10 +10,8 @@ using Core.Utilities.Results.Concrete;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.Dtos;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace Business.Concrete
@@ -52,16 +49,9 @@ namespace Business.Concrete
         [CacheRemoveAspect("ITestService.Get")]
         public IResult AddWithDetails(TestDetailsDto testDetailsDto)
         {
-            var addedTest = new Test
-            {
-                TestName = testDetailsDto.TestName,
-                TestNotes = testDetailsDto.TestNotes,
-                TestTime = testDetailsDto.TestTime,
-                Privacy = testDetailsDto.Privacy,
-                MixedCategory = testDetailsDto.MixedCategory,
-                UserId = testDetailsDto.UserId
-            };
-            testDetailsDto.TestId = this.AddWithId(addedTest).Data;
+            var addedTest = testDetailsDto.Test;
+
+            testDetailsDto.Test.Id = this.AddWithId(addedTest).Data;
 
             AddRelations(testDetailsDto);
             return new SuccessResult();
@@ -75,8 +65,8 @@ namespace Business.Concrete
             {
                 _testQuestionService.Add(new TestQuestion
                 {
-                    TestId = testDetailsDto.TestId,
-                    QuestionId = question.QuestionId
+                    TestId = testDetailsDto.Test.Id,
+                    QuestionId = question.Question.QuestionId
                 });
             }
         }
@@ -127,16 +117,7 @@ namespace Business.Concrete
         [CacheRemoveAspect("ITestService.Get")]
         public IResult DeleteWithDetails(TestDetailsDto testDetailsDto)
         {
-            var test = new Test
-            {
-                Id = testDetailsDto.TestId,
-                MixedCategory = testDetailsDto.MixedCategory,
-                Privacy = testDetailsDto.Privacy,
-                TestName = testDetailsDto.TestName,
-                TestNotes = testDetailsDto.TestNotes,
-                TestTime = testDetailsDto.TestTime,
-                UserId = testDetailsDto.UserId
-            };
+            var test = testDetailsDto.Test;
             _testDal.Delete(test);
             DeleteRelations(test);
 
@@ -167,16 +148,7 @@ namespace Business.Concrete
         [ValidationAspect(typeof(TestDetailsDtoValidator))]
         public IResult UpdateWithDetails(TestDetailsDto testDetailsDto)
         {
-            var test = new Test
-            {
-                Id = testDetailsDto.TestId,
-                MixedCategory = testDetailsDto.MixedCategory,
-                Privacy = testDetailsDto.Privacy,
-                TestName = testDetailsDto.TestName,
-                TestNotes = testDetailsDto.TestNotes,
-                TestTime = testDetailsDto.TestTime,
-                UserId = testDetailsDto.UserId
-            };
+            var test = testDetailsDto.Test;
             _testDal.Update(test);
             UpdateRelations(testDetailsDto);
             return new SuccessResult(_messages.TestUpdated);
@@ -185,11 +157,11 @@ namespace Business.Concrete
         [TransactionScopeAspect]
         private void UpdateRelations(TestDetailsDto test)
         {
-            var defaultQuestions = _testQuestionService.GetAllByTest(test.TestId).Data;
+            var defaultQuestions = _testQuestionService.GetAllByTest(test.Test.Id).Data;
 
             foreach (var question in defaultQuestions)
             {
-                if (!test.Questions.Any(q => q.QuestionId == question.QuestionId))
+                if (!test.Questions.Any(q => q.Question.QuestionId == question.QuestionId))
                 {
                     _testQuestionService.Delete(question);
                 }
@@ -199,8 +171,8 @@ namespace Business.Concrete
             {
                 var updatedTestQuestion = new TestQuestion
                 {
-                    QuestionId = question.QuestionId,
-                    TestId = test.TestId
+                    QuestionId = question.Question.QuestionId,
+                    TestId = test.Test.Id
                 };
 
                 var exists = _testQuestionService.
@@ -224,7 +196,7 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<List<TestDetailsDto>>(_testDal
                 .GetTestDetails()
-                .Where(t => t.Privacy).ToList());
+                .Where(t => t.Test.Privacy).ToList());
         }
     }
 }

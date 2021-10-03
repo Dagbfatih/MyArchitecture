@@ -18,43 +18,18 @@ namespace DataAccess.Concrete.EntityFramework
                 var result = from t in context.Tests
                              select new TestDetailsDto
                              {
-                                 TestId = t.Id,
-                                 TestName = t.TestName,
-                                 UserId = t.UserId,
+                                 Test = t,
                                  UserName = (from u in context.Users
                                              where t.UserId == u.Id
                                              select u.FirstName + " " + u.LastName).FirstOrDefault(),
-                                 TestNotes = t.TestNotes,
-                                 TestTime = t.TestTime,
-                                 MixedCategory = t.MixedCategory,
-                                 Privacy = t.Privacy,
+
                                  Questions = (from tq in context.TestQuestions
                                               where t.Id == tq.TestId
                                               join q in context.Questions
                                               on tq.QuestionId equals q.QuestionId
                                               select new QuestionDetailsDto
                                               {
-                                                  QuestionId = q.QuestionId,
-
-                                                  Categories = (from c in context.Categories
-                                                                join qc in context.QuestionCategories
-                                                                on q.QuestionId equals qc.QuestionId
-                                                                where qc.CategoryId == c.CategoryId
-                                                                select new Category
-                                                                {
-                                                                    CategoryId = c.CategoryId,
-                                                                    CategoryName = c.CategoryName
-                                                                }).ToList(),
-
-                                                  QuestionText = q.QuestionText,
-
-                                                  StarQuestion = q.StarQuestion,
-
-                                                  BrokenQuestion = q.BrokenQuestion,
-
-                                                  Privacy = q.Privacy,
-
-                                                  UserId = q.UserId,
+                                                  Question = q,
                                                   UserName = (from u in context.Users
                                                               where q.UserId == u.Id
                                                               select u.FirstName + " " + u.LastName).FirstOrDefault(),
@@ -69,13 +44,6 @@ namespace DataAccess.Concrete.EntityFramework
                                                                  Accuracy = o.Accuracy
                                                              }).ToList()
                                               }).ToList(),
-                                 Branch = (from b in context.Branches
-                                           where t.BranchId == b.Id
-                                           select new Branch
-                                           {
-                                               Id = b.Id,
-                                               Name = b.Name
-                                           }).FirstOrDefault()
                              };
 
                 return result.ToList();
@@ -90,43 +58,18 @@ namespace DataAccess.Concrete.EntityFramework
                              where t.Id == id
                              select new TestDetailsDto
                              {
-                                 TestId = t.Id,
-                                 TestName = t.TestName,
-                                 UserId = t.UserId,
+                                 Test = t,
                                  UserName = (from u in context.Users
                                              where t.UserId == u.Id
                                              select u.FirstName + " " + u.LastName).FirstOrDefault(),
-                                 TestNotes = t.TestNotes,
-                                 TestTime = t.TestTime,
-                                 MixedCategory = t.MixedCategory,
-                                 Privacy = t.Privacy,
+
                                  Questions = (from tq in context.TestQuestions
                                               where t.Id == tq.TestId
                                               join q in context.Questions
                                               on tq.QuestionId equals q.QuestionId
                                               select new QuestionDetailsDto
                                               {
-                                                  QuestionId = q.QuestionId,
-
-                                                  Categories = (from c in context.Categories
-                                                                join qc in context.QuestionCategories
-                                                                on q.QuestionId equals qc.QuestionId
-                                                                where qc.CategoryId == c.CategoryId
-                                                                select new Category
-                                                                {
-                                                                    CategoryId = c.CategoryId,
-                                                                    CategoryName = c.CategoryName
-                                                                }).ToList(),
-
-                                                  QuestionText = q.QuestionText,
-
-                                                  StarQuestion = q.StarQuestion,
-
-                                                  BrokenQuestion = q.BrokenQuestion,
-
-                                                  Privacy = q.Privacy,
-
-                                                  UserId = q.UserId,
+                                                  Question = q,
                                                   UserName = (from u in context.Users
                                                               where q.UserId == u.Id
                                                               select u.FirstName + " " + u.LastName).FirstOrDefault(),
@@ -141,13 +84,6 @@ namespace DataAccess.Concrete.EntityFramework
                                                                  Accuracy = o.Accuracy
                                                              }).ToList()
                                               }).ToList(),
-                                 Branch = (from b in context.Branches
-                                           where t.BranchId == b.Id
-                                           select new Branch
-                                           {
-                                               Id = b.Id,
-                                               Name = b.Name
-                                           }).FirstOrDefault()
                              };
 
                 return result.FirstOrDefault();
@@ -162,43 +98,18 @@ namespace DataAccess.Concrete.EntityFramework
                              where t.UserId == userId
                              select new TestDetailsDto
                              {
-                                 TestId = t.Id,
-                                 TestName = t.TestName,
-                                 UserId = t.UserId,
+                                 Test = t,
                                  UserName = (from u in context.Users
                                              where t.UserId == u.Id
                                              select u.FirstName + " " + u.LastName).FirstOrDefault(),
-                                 TestNotes = t.TestNotes,
-                                 TestTime = t.TestTime,
-                                 MixedCategory = t.MixedCategory,
-                                 Privacy = t.Privacy,
+
                                  Questions = (from tq in context.TestQuestions
                                               where t.Id == tq.TestId
                                               join q in context.Questions
                                               on tq.QuestionId equals q.QuestionId
                                               select new QuestionDetailsDto
                                               {
-                                                  QuestionId = q.QuestionId,
-
-                                                  Categories = (from c in context.Categories
-                                                                join qc in context.QuestionCategories
-                                                                on q.QuestionId equals qc.QuestionId
-                                                                where qc.CategoryId == c.CategoryId
-                                                                select new Category
-                                                                {
-                                                                    CategoryId = c.CategoryId,
-                                                                    CategoryName = c.CategoryName
-                                                                }).ToList(),
-
-                                                  QuestionText = q.QuestionText,
-
-                                                  StarQuestion = q.StarQuestion,
-
-                                                  BrokenQuestion = q.BrokenQuestion,
-
-                                                  Privacy = q.Privacy,
-
-                                                  UserId = q.UserId,
+                                                  Question = q,
                                                   UserName = (from u in context.Users
                                                               where q.UserId == u.Id
                                                               select u.FirstName + " " + u.LastName).FirstOrDefault(),
@@ -213,13 +124,6 @@ namespace DataAccess.Concrete.EntityFramework
                                                                  Accuracy = o.Accuracy
                                                              }).ToList()
                                               }).ToList(),
-                                 Branch = (from b in context.Branches
-                                           where t.BranchId == b.Id
-                                           select new Branch
-                                           {
-                                               Id = b.Id,
-                                               Name = b.Name
-                                           }).FirstOrDefault()
                              };
 
                 return result.ToList();

@@ -11,6 +11,7 @@ namespace Business.Abstract
     {
         IDataResult<Customer> GetByUser(int userId);
         IDataResult<CustomerDetailsDto> GetCustomerDetailsByUser(int userId);
+        IDataResult<List<CustomerDetailsDto>> GetAllByUserIds(params int[] userIds);
         IResult ConfirmAccount(Customer customer);
     }
 }

@@ -1,7 +1,9 @@
 ﻿using Business.Abstract;
 using Core.Entities.Concrete;
+using Core.Utilities.Results.Concrete;
 using Entities.Concrete;
 using Entities.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -17,13 +19,23 @@ namespace WebAPI.Controllers
     {
         private IAuthService _authService;
         private IUserOperationClaimService _userOperationClaimService;
-        public AuthController(IAuthService authService, IUserOperationClaimService userOperationClaimService)
+        private IRefreshTokenService _refreshTokenService;
+        private IUserService _userService;
+
+        public AuthController(
+            IAuthService authService,
+            IUserOperationClaimService userOperationClaimService,
+            IRefreshTokenService refreshTokenService,
+            IUserService userService)
         {
             _authService = authService;
             _userOperationClaimService = userOperationClaimService;
+            _refreshTokenService = refreshTokenService;
+            _userService = userService;
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public ActionResult Login(UserForLoginDto userForLoginDto)
         {
             var userToLogin = _authService.Login(userForLoginDto);
@@ -32,7 +44,7 @@ namespace WebAPI.Controllers
                 return BadRequest(userToLogin);
             }
 
-            var result = _authService.CreateAccessToken(userToLogin.Data);
+            var result = _authService.CreateToken(userToLogin.Data);
             if (result.Success)
             {
                 return Ok(result);
@@ -42,6 +54,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("register")]
+        [AllowAnonymous]
         public ActionResult Register(UserForRegisterDto userForRegisterDto)
         {
             var registerResult = _authService.Register(userForRegisterDto, userForRegisterDto.Password);
@@ -50,7 +63,7 @@ namespace WebAPI.Controllers
                 return BadRequest(registerResult);
             }
 
-            var result = _authService.CreateAccessToken(registerResult.Data);
+            var result = _authService.CreateToken(registerResult.Data);
             if (result.Success)
             {
                 return Ok(result);
@@ -60,6 +73,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("registerwithcustomer")]
+        [AllowAnonymous]
         public ActionResult RegisterWithCustomer(CustomerForRegisterDto customerForRegisterDto)
         {
             var registerResult = _authService.RegisterWithCustomer(
@@ -72,13 +86,61 @@ namespace WebAPI.Controllers
                 return BadRequest(registerResult);
             }
 
-            var result = _authService.CreateAccessToken(registerResult.Data);
+            var result = _authService.CreateToken(registerResult.Data);
             if (!result.Success)
             {
                 return BadRequest(result);
             }
 
             return Ok(customerForRegisterDto);
+        }
+
+        [HttpPost("[action]")]
+        [AllowAnonymous]
+        public ActionResult RefreshToken()
+        {
+            string clientRefreshToken = HttpContext.Request.Headers["refreshToken"];
+            var refreshTokenIsValid = _authService.RefreshTokenIsValid(clientRefreshToken);
+
+            if (!refreshTokenIsValid.Success) // Token is changed or invalid
+            {
+                return BadRequest(refreshTokenIsValid);
+            }
+
+            RefreshToken newRefreshToken;
+            var storedRefreshToken = _refreshTokenService.GetByRefreshToken(clientRefreshToken);
+            var user = _userService.Get(storedRefreshToken.Data.UserId);
+
+            if (_authService.RefreshTokenExpired(clientRefreshToken).Success) // Token is expired
+            {
+                newRefreshToken = _authService.RefreshToken(user.Data).Data;
+            }
+            else
+            {
+                newRefreshToken = storedRefreshToken.Data;
+            }
+
+            var token = new Token
+            {
+                AccessToken = _authService.CreateAccessToken(user.Data).Data,
+                RefreshToken = newRefreshToken
+            };
+            HttpContext.Response.Headers.Add("refreshToken", token.RefreshToken.Token);
+            HttpContext.Response.Headers.Add("accessToken", token.AccessToken.Token);
+
+            return Ok(new SuccessDataResult<Token>(token));
+        }
+
+        [HttpPost("logout")]
+        public ActionResult Logout(User user)
+        {
+            var result = _refreshTokenService.DeleteIfExists(user);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
         }
     }
 }

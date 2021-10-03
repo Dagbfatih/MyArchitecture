@@ -20,29 +20,18 @@ namespace DataAccess.Concrete.EntityFramework
                              on c.UserId equals u.Id
                              join r in context.Roles
                              on c.RoleId equals r.Id
+                             join l in context.Lessons
+                             on c.LessonId equals l.Id
                              where c.UserId == userId
                              select new CustomerDetailsDto
                              {
-                                 CustomerId = c.Id,
-                                 UserId = c.UserId,
-                                 RoleId = c.RoleId,
+                                 CustomerDetails = c,
                                  RoleName = r.RoleName,
                                  Email = u.Email,
                                  FirstName = u.FirstName,
                                  LastName = u.LastName,
                                  Status = u.Status,
-                                 IsConfirmed = c.IsConfirmed,
-                                 Branch = c.BranchId == 0 ? new Branch
-                                 {
-                                     Id = 0,
-                                     Name = ""
-                                 } : (from b in context.Branches
-                                      where c.BranchId == b.Id
-                                      select new Branch
-                                      {
-                                          Id = b.Id,
-                                          Name = b.Name
-                                      }).FirstOrDefault()
+                                 Lesson = l,
                              };
 
                 return result.FirstOrDefault();

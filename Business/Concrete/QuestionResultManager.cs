@@ -33,16 +33,8 @@ namespace Business.Concrete
         [CacheRemoveAspect("IQuestionResultService.Get")]
         public IResult AddWithDetails(QuestionResultDetailsDto questionResult)
         {
-            var addedQuestionResult = new QuestionResult
-            {
-                Accuracy = questionResult.Accuracy,
-                CorrectOptionId = questionResult.CorrectOptionId,
-                QuestionId = questionResult.QuestionId,
-                SelectedOptionId = questionResult.SelectedOptionId,
-                TestResultId = questionResult.TestResultId
-            };
-
-            this.Add(addedQuestionResult);
+            var addedQuestionResult = questionResult.QuestionResult;
+            Add(addedQuestionResult);
             return new SuccessResult(_messages.QuestionResultCreated);
         }
 
@@ -64,7 +56,7 @@ namespace Business.Concrete
             return new SuccessDataResult<List<QuestionResult>>(_questionResultDal.GetAll());
         }
 
-        [CacheAspect]
+        [CacheAspect(30)]
         public IDataResult<List<QuestionResultDetailsDto>> GetAllDetails()
         {
             return new SuccessDataResult<List<QuestionResultDetailsDto>>(_questionResultDal.GetAllDetails());

@@ -25,8 +25,6 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<EfCategoryDal>().As<ICategoryDal>();
             builder.RegisterType<OptionManager>().As<IOptionService>();
             builder.RegisterType<EfOptionDal>().As<IOptionDal>();
-            builder.RegisterType<QuestionCategoryManager>().As<IQuestionCategoryService>();
-            builder.RegisterType<EfQuestionCategoryDal>().As<IQuestionCategoryDal>();
             builder.RegisterType<AuthManager>().As<IAuthService>();
             builder.RegisterType<JwtHelper>().As<ITokenHelper>();
             builder.RegisterType<EfTestDal>().As<ITestDal>();
@@ -59,6 +57,14 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<EfOperationClaimDal>().As<IOperationClaimDal>();
             builder.RegisterType<BranchManager>().As<IBranchService>();
             builder.RegisterType<EfBranchDal>().As<IBranchDal>();
+            builder.RegisterType<GradeLevelManager>().As<IGradeLevelService>();
+            builder.RegisterType<EfGradeLevelDal>().As<IGradeLevelDal>();
+            builder.RegisterType<LessonManager>().As<ILessonService>();
+            builder.RegisterType<EfLessonDal>().As<ILessonDal>();
+            builder.RegisterType<SubjectManager>().As<ISubjectService>();
+            builder.RegisterType<EfSubjectDal>().As<ISubjectDal>();
+            builder.RegisterType<RefreshTokenManager>().As<IRefreshTokenService>();
+            builder.RegisterType<EfRefreshTokenDal>().As<IRefreshTokenDal>();
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 

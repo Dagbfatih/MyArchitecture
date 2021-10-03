@@ -16,8 +16,8 @@ namespace Business.Concrete
 {
     public class TestResultManager : BusinessMessagesService, ITestResultService
     {
-        ITestResultDal _testResultDal;
-        IQuestionResultService _questionResultService;
+        private readonly ITestResultDal _testResultDal;
+        private readonly IQuestionResultService _questionResultService;
         public TestResultManager(ITestResultDal testResultDal, IQuestionResultService questionResultService)
         {
             _testResultDal = testResultDal;
@@ -43,7 +43,7 @@ namespace Business.Concrete
 
             foreach (var questionResult in testResult.QuestionResults)
             {
-                questionResult.TestResultId = testResultId;
+                questionResult.QuestionResult.TestResultId = testResultId;
                 _questionResultService.AddWithDetails(questionResult);
             }
 
@@ -72,6 +72,7 @@ namespace Business.Concrete
             return new SuccessDataResult<List<TestResultDetailsDto>>(_testResultDal.GetAllDetails());
         }
 
+        [SecuredOperation("user", true)]
         public IDataResult<List<TestResultDetailsDto>> GetAllDetailsByUser(int userId)
         {
             return new SuccessDataResult<List<TestResultDetailsDto>>(_testResultDal.GetAllDetailsByUser(userId));

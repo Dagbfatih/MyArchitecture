@@ -7,6 +7,7 @@ using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.Business;
 using Core.Entities.Concrete;
+using Core.Utilities.Helpers;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
 using Core.Utilities.Security.Hashing;
@@ -27,18 +28,23 @@ namespace Business.Concrete
         private ICustomerService _customerService;
         private IUserOperationClaimService _userOperationClaimService;
         private IOperationClaimService _operationClaimService;
+        private IRefreshTokenService _refreshTokenService;
 
-        public AuthManager(IUserService userService,
+        public AuthManager(
+            IUserService userService,
             ITokenHelper tokenHelper,
             ICustomerService customerService,
             IUserOperationClaimService userOperationClaimService,
-            IOperationClaimService operationClaimService)
+            IOperationClaimService operationClaimService,
+            IRefreshTokenService refreshTokenService
+            )
         {
             _userService = userService;
             _tokenHelper = tokenHelper;
             _customerService = customerService;
             _userOperationClaimService = userOperationClaimService;
             _operationClaimService = operationClaimService;
+            _refreshTokenService = refreshTokenService;
         }
 
         [ValidationAspect(typeof(AuthRegisterValidator))]
@@ -119,7 +125,7 @@ namespace Business.Concrete
                 PasswordSalt = passwordSalt,
                 Status = true
             };
-            var userId = _userService.AddWithId(user);
+            int userId = _userService.AddWithId(user);
             user.Id = userId;
 
             customer.UserId = userId;
@@ -169,6 +175,64 @@ namespace Business.Concrete
             }
 
             _userOperationClaimService.AddClaims(claims);
+        }
+
+        public IDataResult<RefreshToken> CreateRefreshToken(User user)
+        {
+            _refreshTokenService.DeleteIfExists(user);
+            var refreshToken = _refreshTokenService.GenerateRefreshToken(user).Data;
+            _refreshTokenService.Add(refreshToken);
+
+            return new SuccessDataResult<RefreshToken>(refreshToken, _messages.RefreshTokenCreated);
+        }
+
+        [TransactionScopeAspect]
+        public IDataResult<Token> CreateToken(User user)
+        {
+            var token = new Token
+            {
+                AccessToken = CreateAccessToken(user).Data,
+                RefreshToken = CreateRefreshToken(user).Data
+            };
+
+            return new SuccessDataResult<Token>(token);
+        }
+
+        public IResult RefreshTokenIsValid(string token)
+        {
+            var refreshToken = _refreshTokenService.GetByRefreshToken(token).Data;
+
+            if (refreshToken == null)
+            {
+                return new ErrorResult(_messages.RefreshTokenInvalid);
+            }
+
+            return new SuccessResult();
+        }
+
+        public IResult RefreshTokenExpired(string token)
+        {
+            var refreshToken = _refreshTokenService.GetByRefreshToken(token).Data;
+
+            if (refreshToken != null)
+            {
+                if (refreshToken.ExpireTime < DateTime.Now)
+                {
+                    return new ErrorResult(_messages.RefreshTokenExpired);
+                }
+            }
+            return new SuccessResult();
+        }
+
+        public IDataResult<RefreshToken> RefreshToken(User user)
+        {
+            var refreshToken = _refreshTokenService.GetByUser(user.Id).Data;
+            if (refreshToken != null)
+            {
+                refreshToken = CreateRefreshToken(user).Data;
+            }
+
+            return new SuccessDataResult<RefreshToken>(refreshToken);
         }
     }
 }

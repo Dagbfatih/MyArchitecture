@@ -52,6 +52,18 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+        [HttpGet("getallbyids")]
+        public IActionResult GetAllByIds([FromQuery(Name = "userIds")] int[] userIds)
+        {
+            var result = _userService.GetAllByIds(userIds);
+
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
         [HttpPost("update")]
         public IActionResult Update(User user)
         {

@@ -17,9 +17,9 @@ namespace Business.ValidationRules.FluentValidation
         {
             _messages = ServiceTool.ServiceProvider.GetService<Messages>();
 
-            RuleFor(t => t.UserId).NotNull().NotEqual(0);
-            RuleFor(t => t.TestName).NotEmpty().NotNull();
-            RuleFor(t => t.TestTime).NotEqual(0).GreaterThan(0);
+            RuleFor(t => t.Test.UserId).NotNull().NotEqual(0);
+            RuleFor(t => t.Test.Title).NotEmpty().NotNull();
+            RuleFor(t => t.Test.TestTime).NotEqual(0).GreaterThan(0);
         }
     }
 }

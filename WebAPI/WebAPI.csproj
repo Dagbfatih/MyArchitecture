@@ -17,7 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\" />
+    <Folder Include="wwwroot\Logo\" />
+    <Folder Include="wwwroot\Flags\" />
   </ItemGroup>
 
 

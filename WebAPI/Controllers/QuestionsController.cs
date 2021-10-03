@@ -1,6 +1,7 @@
 ﻿using Business.Abstract;
 using Entities.Concrete;
 using Entities.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -34,6 +35,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("getalldetailsbypublic")]
+        [AllowAnonymous]
         public IActionResult GetAllDetailsByPublic()
         {
             var result = _questionService.GetAllDetailsByPublic();
@@ -86,17 +88,6 @@ namespace WebAPI.Controllers
         public IActionResult Update(Question question)
         {
             var result = _questionService.Update(question);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpGet("getbycategoryid")]
-        public IActionResult GetAllByCategoryId(int categoryId)
-        {
-            var result = _questionService.GetAllByCategoryId(categoryId);
             if (result.Success)
             {
                 return Ok(result);
@@ -159,54 +150,10 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("getcategoriesbyid")]
-        public IActionResult GetQuestionCategories(int questionId)
-        {
-            var result = _questionService.GetQuestionCategories(questionId);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpGet("getquestionsbycategory")]
-        public IActionResult GetQuestionssByCategoryId(int categoryId)
-        {
-            var result = _questionService.GetQuestionsByCategoryId(categoryId);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpGet("getdetailsbycategory")]
-        public IActionResult GetDetailsByCategoryId(int categoryId)
-        {
-            var result = _questionService.GetDetailsByCategory(categoryId);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
         [HttpGet("getdetailsbyuser")]
         public IActionResult GetDetailsByUser(int userId)
         {
             var result = _questionService.GetDetailsByUser(userId);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpGet("getdetailsbyuserwithcategory")]
-        public IActionResult GetDetailsByUserWithCategory(int userId, int categoryId)
-        {
-            var result = _questionService.GetDetailsByUserWithCategory(userId, categoryId);
             if (result.Success)
             {
                 return Ok(result);

@@ -11,19 +11,14 @@ namespace Business.Abstract
     {
         IDataResult<List<QuestionDetailsDto>> GetAllDetailsByPublic();
         IResult AddWithDetails(QuestionDetailsDto question);
-        IDataResult<List<Question>> GetAllByCategoryId(int categoryId);
         IDataResult<List<Question>> GetAllByStarQuestion();
         IDataResult<List<Question>> GetAllByOptionName(string optionName);
         IDataResult<List<Question>> GetAllByOptionNumber(int optionNumber);
         IDataResult<QuestionDetailsDto> GetQuestionDetailsById(int questionId);
         IDataResult<List<QuestionDetailsDto>> GetQuestionsDetails();
-        IDataResult<QuestionCategoriesDto> GetQuestionCategories(int questionId);
-        IDataResult<List<Question>> GetQuestionsByCategoryId(int categoryId);
         IResult AddTransactionalOperation(Question question);
         IDataResult<List<QuestionDetailsDto>> GetDetailsByQuestionText(string text);
-        IDataResult<List<QuestionDetailsDto>> GetDetailsByCategory(int categoryId);
         IDataResult<List<QuestionDetailsDto>> GetDetailsByUser(int userId);
-        IDataResult<List<QuestionDetailsDto>> GetDetailsByUserWithCategory(int userId, int categoryId);
         IResult UpdateWithDetails(QuestionDetailsDto question);
         IDataResult<Question> AddWithId(Question question);
 

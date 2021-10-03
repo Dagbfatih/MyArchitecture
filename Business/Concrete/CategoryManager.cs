@@ -20,11 +20,9 @@ namespace Business.Concrete
     public class CategoryManager : BusinessMessagesService, ICategoryService
     {
         ICategoryDal _categoryDal;
-        IQuestionCategoryService _categoryService;
-        public CategoryManager(ICategoryDal categoryDal, IQuestionCategoryService categoryService)
+        public CategoryManager(ICategoryDal categoryDal)
         {
             _categoryDal = categoryDal;
-            _categoryService = categoryService;
         }
 
         [ValidationAspect(typeof(CategoryValidator))]
@@ -38,7 +36,6 @@ namespace Business.Concrete
         [SecuredOperation("admin")]
         public IResult Delete(Category category)
         {
-            DeleteRelations(category);
             _categoryDal.Delete(category);
             return new SuccessResult(_messages.CategoryDeleted);
         }
@@ -65,20 +62,5 @@ namespace Business.Concrete
             _categoryDal.Update(category);
             return new SuccessResult(_messages.CategoryUpdated);
         }
-
-        private void DeleteRelations(Category category)
-        {
-            var deletedQuestionCategories = _categoryService.GetAll().Data.Where(qc => qc.CategoryId == category.CategoryId);
-            if (deletedQuestionCategories == null)
-            {
-                return;
-            }
-            foreach (var questionCategory in deletedQuestionCategories)
-            {
-                _categoryService.Delete(questionCategory);
-            }
-        }
-
-        
     }
 }

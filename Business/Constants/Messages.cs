@@ -25,8 +25,7 @@ namespace Business.Constants
 
         private string GetMessage(string key)
         {
-            string result;
-            if (_translationContext.Translates.TryGetValue(key,out result))
+            if (_translationContext.Translates.TryGetValue(key, out string result))
             {
                 return result;
             }
@@ -145,5 +144,24 @@ namespace Business.Constants
         public string BranchUpdated { get { return GetMessage("branchUpdated"); } }
 
         public string RoleIdNotNull { get { return GetMessage("roleIdNotNull"); } }
+
+        public string DifficultyAdded { get; internal set; }
+        public string DifficultyDeleted { get; internal set; }
+        public string DifficultyUpdated { get; internal set; }
+        public string GradeLevelAdded { get; internal set; }
+        public string GradeLevelDeleted { get; internal set; }
+        public string GradeLevelUpdated { get; internal set; }
+        public string LessonCreated { get; internal set; }
+        public string LessonDeleted { get; internal set; }
+        public string LessonUpdated { get; internal set; }
+        public string SubjectAdded { get; internal set; }
+        public string SubjectDeleted { get; internal set; }
+        public string SubjectUpdated { get; internal set; }
+        public string RefreshTokenCreated { get; internal set; }
+        public string RefreshTokenAdded { get; internal set; }
+        public string RefreshTokenDeleted { get; internal set; }
+        public string RefreshTokenUpdated { get; internal set; }
+        public string RefreshTokenInvalid { get; internal set; }
+        public string RefreshTokenExpired { get; internal set; }
     }
 }
