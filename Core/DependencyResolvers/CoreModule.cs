@@ -31,13 +31,12 @@ namespace Core.DependencyResolvers
             serviceCollection.AddSingleton<IErrorDetails, DefaultErrorDetails>();
             serviceCollection.AddSingleton<ITokenService, TokenService>();
             serviceCollection.AddSingleton<RefreshTokenHelper>();
+            serviceCollection.AddSingleton<FileHelper>();
             serviceCollection.AddSingleton<CoreMessages>();
             serviceCollection.AddSingleton<JwtSecurityTokenHandler>();
             serviceCollection.AddSingleton<ITranslationContext, TranslationContext>();
             serviceCollection.AddSingleton<IEmailConfiguration, EmailConfiguration>();
             serviceCollection.AddSingleton<IEmailService, EmailManager>();
-
-
         }
     }
 }

@@ -11,45 +11,12 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class QuestionResultsController : ControllerBase
+    public class QuestionResultsController : ControllerRepositoryBase<QuestionResult>
     {
         IQuestionResultService _questionResultService;
-        public QuestionResultsController(IQuestionResultService questionResultService)
+        public QuestionResultsController(IQuestionResultService questionResultService) : base(questionResultService)
         {
             _questionResultService = questionResultService;
-        }
-
-        [HttpPost("add")]
-        public IActionResult Add(QuestionResult questionResult)
-        {
-            var result = _questionResultService.Add(questionResult);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpPost("update")]
-        public IActionResult Update(QuestionResult questionResult)
-        {
-            var result = _questionResultService.Update(questionResult);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpGet("getall")]
-        public IActionResult GetAll()
-        {
-            var result = _questionResultService.GetAll();
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
         }
 
         [HttpGet("getalldetails")]

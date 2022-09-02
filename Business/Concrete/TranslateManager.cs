@@ -8,10 +8,11 @@ using Core.Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Entities.Dtos;
+using Core.Entities.Dtos;
 using System.Linq;
 using Business.Services;
 using Core.Business;
+using Business.BusinessAspects.Autofac;
 
 namespace Business.Concrete
 {
@@ -24,6 +25,7 @@ namespace Business.Concrete
         }
 
         [CacheRemoveAspect("ITranslateService.Get")]
+        [SecuredOperation("admin")]
         public IResult Add(Translate entity)
         {
             var result = BusinessRules.Run(CheckIfExists(entity));
@@ -51,6 +53,7 @@ namespace Business.Concrete
         }
 
         [CacheRemoveAspect("ITranslateService.Get")]
+        [SecuredOperation("admin")]
         public IResult Delete(Translate entity)
         {
             _translateDal.Delete(entity);
@@ -134,6 +137,7 @@ namespace Business.Concrete
         }
 
         [CacheRemoveAspect("ITranslateService.Get")]
+        [SecuredOperation("admin")]
         public IResult Update(Translate entity)
         {
             _translateDal.Update(entity);

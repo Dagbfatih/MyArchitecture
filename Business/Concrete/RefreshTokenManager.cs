@@ -112,7 +112,5 @@ namespace Business.Concrete
             }
             return new ErrorResult();
         }
-
-
     }
 }

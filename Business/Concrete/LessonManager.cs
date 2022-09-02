@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Services;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
@@ -19,12 +20,14 @@ namespace Business.Concrete
             _lessonDal = lessonDal;
         }
 
+        [SecuredOperation("admin")]
         public IResult Add(Lesson entity)
         {
             _lessonDal.Add(entity);
             return new SuccessResult(_messages.LessonCreated);
         }
 
+        [SecuredOperation("admin")]
         public IResult Delete(Lesson entity)
         {
             _lessonDal.Delete(entity);
@@ -41,6 +44,12 @@ namespace Business.Concrete
             return new SuccessDataResult<List<Lesson>>(_lessonDal.GetAll());
         }
 
+        public IDataResult<List<Lesson>> GetAllByGradeLevel(int gradeLevelId)
+        {
+            return new SuccessDataResult<List<Lesson>>(_lessonDal.GetAll(l => l.GradeLevelId == gradeLevelId));
+        }
+
+        [SecuredOperation("admin")]
         public IResult Update(Lesson entity)
         {
             _lessonDal.Update(entity);

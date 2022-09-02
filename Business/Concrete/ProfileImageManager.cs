@@ -80,12 +80,13 @@ namespace Business.Concrete
         public IDataResult<ProfileImage> GetImageByUserId(int userId)
         {
             var result = _profileImageDal.Get(i => i.UserId == userId);
-            if (result == null)
+            if (result.ImagePath == null)
             {
                 ProfileImage profileImage = new ProfileImage
                 {
                     UserId = userId,
-                    ImagePath = @"\Images\defaultProfileImage.png"
+                    ImagePath = @"\Images\defaultProfileImage.png",
+                    Date = result.Date
                 };
 
                 return new SuccessDataResult<ProfileImage>(profileImage);

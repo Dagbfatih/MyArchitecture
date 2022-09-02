@@ -2,6 +2,7 @@
 using Core.Entities.Concrete;
 using Core.Utilities.Results.Concrete;
 using Entities.Concrete;
+using Core.Entities.Dtos;
 using Entities.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -36,7 +37,7 @@ namespace WebAPI.Controllers
 
         [HttpPost("login")]
         [AllowAnonymous]
-        public ActionResult Login(UserForLoginDto userForLoginDto)
+        public IActionResult Login(UserForLoginDto userForLoginDto)
         {
             var userToLogin = _authService.Login(userForLoginDto);
             if (!userToLogin.Success)
@@ -55,7 +56,7 @@ namespace WebAPI.Controllers
 
         [HttpPost("register")]
         [AllowAnonymous]
-        public ActionResult Register(UserForRegisterDto userForRegisterDto)
+        public IActionResult Register(UserForRegisterDto userForRegisterDto)
         {
             var registerResult = _authService.Register(userForRegisterDto, userForRegisterDto.Password);
             if (!registerResult.Success)
@@ -74,7 +75,7 @@ namespace WebAPI.Controllers
 
         [HttpPost("registerwithcustomer")]
         [AllowAnonymous]
-        public ActionResult RegisterWithCustomer(CustomerForRegisterDto customerForRegisterDto)
+        public IActionResult RegisterWithCustomer(CustomerForRegisterDto customerForRegisterDto)
         {
             var registerResult = _authService.RegisterWithCustomer(
                 customerForRegisterDto.User,
@@ -97,7 +98,7 @@ namespace WebAPI.Controllers
 
         [HttpPost("[action]")]
         [AllowAnonymous]
-        public ActionResult RefreshToken()
+        public IActionResult RefreshToken()
         {
             string clientRefreshToken = HttpContext.Request.Headers["refreshToken"];
             var refreshTokenIsValid = _authService.RefreshTokenIsValid(clientRefreshToken);
@@ -125,14 +126,12 @@ namespace WebAPI.Controllers
                 AccessToken = _authService.CreateAccessToken(user.Data).Data,
                 RefreshToken = newRefreshToken
             };
-            HttpContext.Response.Headers.Add("refreshToken", token.RefreshToken.Token);
-            HttpContext.Response.Headers.Add("accessToken", token.AccessToken.Token);
 
             return Ok(new SuccessDataResult<Token>(token));
         }
 
         [HttpPost("logout")]
-        public ActionResult Logout(User user)
+        public IActionResult Logout(User user)
         {
             var result = _refreshTokenService.DeleteIfExists(user);
             if (result.Success)

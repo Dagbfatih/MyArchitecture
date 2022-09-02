@@ -15,23 +15,12 @@ namespace WebAPI.Controllers
     // sadece questions yazmak yeterlidir çünkü WebAPI bizim için QuestionsController isminden controller'i keser. Domain adresi yerine sadece 'questions' yazmak yeterli olur.
 
     [ApiController]
-    public class QuestionsController : ControllerBase
+    public class QuestionsController : ControllerRepositoryBase<Question>
     {
         IQuestionService _questionService;
-        public QuestionsController(IQuestionService questionService)
+        public QuestionsController(IQuestionService questionService) : base(questionService)
         {
             _questionService = questionService;
-        }
-
-        [HttpGet("getall")]
-        public IActionResult GetAll()
-        {
-            var result = _questionService.GetAll();
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
         }
 
         [HttpGet("getalldetailsbypublic")]
@@ -45,18 +34,7 @@ namespace WebAPI.Controllers
             }
             return BadRequest(result);
         }
-
-        [HttpPost("add")]
-        public IActionResult Add(Question question)
-        {
-            var result = _questionService.Add(question);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
+        
         [HttpPost("addwithrelations")]
         public IActionResult AddWithRelations(QuestionDetailsDto question)
         {
@@ -73,25 +51,15 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpDelete("delete")]
-        public IActionResult Delete(Question question)
+        [HttpDelete("deletewithdetails")]
+        public IActionResult DeleteWithDetails(QuestionDetailsDto question)
         {
-            var result = _questionService.Delete(question);
+            var result = _questionService.DeleteWithDetails(question);
             if (result.Success)
             {
                 return Ok(result);
             }
-            return BadRequest(result);
-        }
-
-        [HttpPut("update")]
-        public IActionResult Update(Question question)
-        {
-            var result = _questionService.Update(question);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
+                
             return BadRequest(result);
         }
 
@@ -110,6 +78,18 @@ namespace WebAPI.Controllers
         public IActionResult GetAllByOptionNumber(int optionNumber)
         {
             var result = _questionService.GetAllByOptionNumber(optionNumber);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("[action]")]
+        [AllowAnonymous]
+        public IActionResult GetAllDetailsBySubjectsAndPublic([FromQuery(Name = "subjects")] int[] subjects)
+        {
+            var result = _questionService.GetAllDetailsBySubjectsAndPublic(subjects);
             if (result.Success)
             {
                 return Ok(result);

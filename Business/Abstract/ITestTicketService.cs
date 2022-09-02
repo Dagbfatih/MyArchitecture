@@ -1,11 +1,12 @@
-﻿using Entities.Concrete;
+﻿using Core.Business;
+using Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Business.Abstract
 {
-    public interface ITestTicketService:IBusinessService<TestTicket>
+    public interface ITestTicketService: IBusinessServiceRepository<TestTicket>
     {
     }
 }

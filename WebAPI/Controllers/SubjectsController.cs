@@ -1,5 +1,6 @@
 ﻿using Business.Abstract;
 using Entities.Concrete;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,49 +12,17 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SubjectsController : ControllerBase
+    public class SubjectsController : ControllerRepositoryBase<Subject>
     {
         private readonly ISubjectService _subjectService;
 
-        public SubjectsController(ISubjectService subjectService)
+        public SubjectsController(ISubjectService subjectService) : base(subjectService)
         {
             _subjectService = subjectService;
         }
 
-        [HttpPost("add")]
-        public IActionResult Add(Subject subject)
-        {
-            var result = _subjectService.Add(subject);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpPut("update")]
-        public IActionResult Update(Subject subject)
-        {
-            var result = _subjectService.Update(subject);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpGet("getall")]
-        public IActionResult GetAll()
-        {
-            var result = _subjectService.GetAll();
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
         [HttpGet("getallbylesson")]
+        [AllowAnonymous]
         public IActionResult GetAllByLesson(int lessonId)
         {
             var result = _subjectService.GetAllByLesson(lessonId);
@@ -64,10 +33,12 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpDelete("delete")]
-        public IActionResult Delete(Subject subject)
+        [HttpGet("getallbylessons")]
+        [AllowAnonymous]
+        public IActionResult GetAllByIds([FromQuery(Name = "lessonIds")] int[] lessonIds)
         {
-            var result = _subjectService.Delete(subject);
+            var result = _subjectService.GetALlByLessons(lessonIds);
+
             if (result.Success)
             {
                 return Ok(result);

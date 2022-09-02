@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Services;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
@@ -19,12 +20,14 @@ namespace Business.Concrete
             _subjectDal = subjectDal;
         }
 
+        [SecuredOperation("admin")]
         public IResult Add(Subject entity)
         {
             _subjectDal.Add(entity);
             return new SuccessResult(_messages.SubjectAdded);
         }
 
+        [SecuredOperation("admin")]
         public IResult Delete(Subject entity)
         {
             _subjectDal.Delete(entity);
@@ -46,6 +49,22 @@ namespace Business.Concrete
             return new SuccessDataResult<List<Subject>>(_subjectDal.GetAll(s => s.LessonId == lessonId));
         }
 
+        public IDataResult<List<Subject>> GetALlByLessons(params int[] lessonIds)
+        {
+            List<Subject> result = new List<Subject>();
+
+            foreach (var lessonId in lessonIds)
+            {
+                var subjects = GetAllByLesson(lessonId).Data;
+                if (subjects != null)
+                {
+                    result.AddRange(subjects);
+                }
+            }
+            return new SuccessDataResult<List<Subject>>(result);
+        }
+
+        [SecuredOperation("admin")]
         public IResult Update(Subject entity)
         {
             _subjectDal.Update(entity);

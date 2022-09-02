@@ -145,23 +145,23 @@ namespace Business.Constants
 
         public string RoleIdNotNull { get { return GetMessage("roleIdNotNull"); } }
 
-        public string DifficultyAdded { get; internal set; }
-        public string DifficultyDeleted { get; internal set; }
-        public string DifficultyUpdated { get; internal set; }
-        public string GradeLevelAdded { get; internal set; }
-        public string GradeLevelDeleted { get; internal set; }
-        public string GradeLevelUpdated { get; internal set; }
-        public string LessonCreated { get; internal set; }
-        public string LessonDeleted { get; internal set; }
-        public string LessonUpdated { get; internal set; }
-        public string SubjectAdded { get; internal set; }
-        public string SubjectDeleted { get; internal set; }
-        public string SubjectUpdated { get; internal set; }
-        public string RefreshTokenCreated { get; internal set; }
-        public string RefreshTokenAdded { get; internal set; }
-        public string RefreshTokenDeleted { get; internal set; }
-        public string RefreshTokenUpdated { get; internal set; }
-        public string RefreshTokenInvalid { get; internal set; }
-        public string RefreshTokenExpired { get; internal set; }
+        public string DifficultyAdded { get { return GetMessage("added"); } }
+        public string DifficultyDeleted { get { return GetMessage("added"); } }
+        public string DifficultyUpdated { get { return GetMessage("added"); } }
+        public string GradeLevelAdded { get { return GetMessage("added"); } }
+        public string GradeLevelDeleted { get { return GetMessage("added"); } }
+        public string GradeLevelUpdated { get { return GetMessage("added"); } }
+        public string LessonCreated { get { return GetMessage("added"); } }
+        public string LessonDeleted { get { return GetMessage("added"); } }
+        public string LessonUpdated { get { return GetMessage("added"); } }
+        public string SubjectAdded { get { return GetMessage("added"); } }
+        public string SubjectDeleted { get { return GetMessage("added"); } }
+        public string SubjectUpdated { get { return GetMessage("added"); } }
+        public string RefreshTokenCreated { get { return GetMessage("added"); } }
+        public string RefreshTokenAdded { get { return GetMessage("added"); } }
+        public string RefreshTokenDeleted { get { return GetMessage("added"); } }
+        public string RefreshTokenUpdated { get { return GetMessage("added"); } }
+        public string RefreshTokenInvalid { get { return GetMessage("added"); } }
+        public string RefreshTokenExpired { get { return GetMessage("added"); } }
     }
 }

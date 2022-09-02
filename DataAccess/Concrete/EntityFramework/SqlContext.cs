@@ -46,6 +46,12 @@ namespace DataAccess.Concrete.EntityFramework
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<City> Cities { get; set; }
+        public DbSet<ProfileInfo> ProfileInfos { get; set; }
+        public DbSet<ProfileInfoWebsite> ProfileInfoWebsites { get; set; }
+        public DbSet<School> Schools { get; set; }
+        public DbSet<Website> Websites { get; set; }
+        public DbSet<Difficulty> Difficulties { get; set; }
 
     }
 }

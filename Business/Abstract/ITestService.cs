@@ -1,4 +1,5 @@
-﻿using Core.Utilities.Results.Abstract;
+﻿using Core.Business;
+using Core.Utilities.Results.Abstract;
 using Entities.Concrete;
 using Entities.Dtos;
 using System;
@@ -7,7 +8,7 @@ using System.Text;
 
 namespace Business.Abstract
 {
-    public interface ITestService : IBusinessService<Test>
+    public interface ITestService : IBusinessServiceRepository<Test>
     {
         IResult AddWithDetails(TestDetailsDto testDetailsDto);
         IDataResult<int> AddWithId(Test test);

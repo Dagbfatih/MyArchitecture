@@ -1,5 +1,5 @@
 ﻿using Business.Constants;
-using Entities.Dtos;
+using Core.Entities.Dtos;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -20,11 +20,11 @@ namespace Business.ValidationRules.FluentValidation
             RuleFor(u => u.Password).MaximumLength(16).MinimumLength(8);
             RuleFor(u => u.Password).NotEmpty().NotNull();
             RuleFor(u => u.Password).Must(MustContainAtLeastUppercase).
-                WithMessage(_messages.MustContainAtLeastUppercaseChar);
-            RuleFor(u => u.Password).Must(MustContainAtLeastNumerical).
-                WithMessage(_messages.MustContainAtLeastNumerical);
+                WithMessage(_messages.MustContainAtLeastUppercaseChar); // en az bir büyük harf
+            //RuleFor(u => u.Password).Must(MustContainAtLeastNumerical).
+            //    WithMessage(_messages.MustContainAtLeastNumerical); // en az bir rakam
             RuleFor(u => u.Password).Must(MustNotContainAtLeastSpace).
-                WithMessage(_messages.MustNotContainAtLeastSpace);
+                WithMessage(_messages.MustNotContainAtLeastSpace); // boşluk içermemeli
         }
 
         private bool MustNotContainAtLeastSpace(string arg)

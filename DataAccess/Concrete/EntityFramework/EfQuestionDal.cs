@@ -37,7 +37,18 @@ namespace DataAccess.Concrete
                                                 OptionText = o.OptionText,
                                                 Accuracy = o.Accuracy
                                             }).ToList(),
-
+                                 GradeLevel = (from g in context.GradeLevels
+                                               where q.GradeLevelId == g.Id
+                                               select g).FirstOrDefault(),
+                                 Difficulty = (from d in context.Difficulties
+                                               where q.DifficultyLevelId == d.Id
+                                               select d).FirstOrDefault(),
+                                 Lesson = (from l in context.Lessons
+                                           where q.LessonId == l.Id
+                                           select l).FirstOrDefault(),
+                                 Subject = (from s in context.Subjects
+                                            where q.SubjectId == s.Id
+                                            select s).FirstOrDefault()
 
                              };
 
@@ -68,8 +79,20 @@ namespace DataAccess.Concrete
                                             }).ToList(),
                                  UserName = (from u in context.Users
                                              where q.UserId == u.Id
-                                             select new string((u.FirstName + " " + u.LastName).ToCharArray()))
-                                .FirstOrDefault(),
+                                             select new string((u.FirstName + " " + u.LastName)
+                                             .ToCharArray())).FirstOrDefault(),
+                                 GradeLevel = (from g in context.GradeLevels
+                                               where q.GradeLevelId == g.Id
+                                               select g).FirstOrDefault(),
+                                 Difficulty = (from d in context.Difficulties
+                                               where q.DifficultyLevelId == d.Id
+                                               select d).FirstOrDefault(),
+                                 Lesson = (from l in context.Lessons
+                                           where q.LessonId == l.Id
+                                           select l).FirstOrDefault(),
+                                 Subject = (from s in context.Subjects
+                                            where q.SubjectId == s.Id
+                                            select s).FirstOrDefault()
                              };
 
                 return result.FirstOrDefault();
@@ -102,6 +125,18 @@ namespace DataAccess.Concrete
                                                 OptionText = o.OptionText,
                                                 Accuracy = o.Accuracy
                                             }).ToList(),
+                                 GradeLevel = (from g in context.GradeLevels
+                                               where q.GradeLevelId == g.Id
+                                               select g).FirstOrDefault(),
+                                 Difficulty = (from d in context.Difficulties
+                                               where q.DifficultyLevelId == d.Id
+                                               select d).FirstOrDefault(),
+                                 Lesson = (from l in context.Lessons
+                                           where q.LessonId == l.Id
+                                           select l).FirstOrDefault(),
+                                 Subject = (from s in context.Subjects
+                                            where q.SubjectId == s.Id
+                                            select s).FirstOrDefault()
 
                              };
 
@@ -134,6 +169,18 @@ namespace DataAccess.Concrete
                                                 OptionText = o.OptionText,
                                                 Accuracy = o.Accuracy
                                             }).ToList(),
+                                 GradeLevel = (from g in context.GradeLevels
+                                               where q.GradeLevelId == g.Id
+                                               select g).FirstOrDefault(),
+                                 Difficulty = (from d in context.Difficulties
+                                               where q.DifficultyLevelId == d.Id
+                                               select d).FirstOrDefault(),
+                                 Lesson = (from l in context.Lessons
+                                           where q.LessonId == l.Id
+                                           select l).FirstOrDefault(),
+                                 Subject = (from s in context.Subjects
+                                            where q.SubjectId == s.Id
+                                            select s).FirstOrDefault()
                              };
 
 
@@ -164,6 +211,61 @@ namespace DataAccess.Concrete
                                                 OptionText = o.OptionText,
                                                 Accuracy = o.Accuracy
                                             }).ToList(),
+                                 GradeLevel = (from g in context.GradeLevels
+                                               where q.GradeLevelId == g.Id
+                                               select g).FirstOrDefault(),
+                                 Difficulty = (from d in context.Difficulties
+                                               where q.DifficultyLevelId == d.Id
+                                               select d).FirstOrDefault(),
+                                 Lesson = (from l in context.Lessons
+                                           where q.LessonId == l.Id
+                                           select l).FirstOrDefault(),
+                                 Subject = (from s in context.Subjects
+                                            where q.SubjectId == s.Id
+                                            select s).FirstOrDefault()
+                             };
+
+
+                return result.ToList();
+            }
+        }
+
+        public List<QuestionDetailsDto> GetAllDetailsBySubjects(params int[] subjects)
+        {
+            using (SqlContext context = new SqlContext())
+            {
+                var result = from q in context.Questions
+                             where subjects.Contains(q.SubjectId)
+                             select new QuestionDetailsDto
+                             {
+
+                                 Question = q,
+
+                                 UserName = (from u in context.Users
+                                             where q.UserId == u.Id
+                                             select u.FirstName + " " + u.LastName).FirstOrDefault(),
+
+                                 Options = (from o in context.Options
+                                            where q.QuestionId == o.QuestionId
+                                            select new Option
+                                            {
+                                                Id = o.Id,
+                                                QuestionId = o.QuestionId,
+                                                OptionText = o.OptionText,
+                                                Accuracy = o.Accuracy
+                                            }).ToList(),
+                                 GradeLevel = (from g in context.GradeLevels
+                                               where q.GradeLevelId == g.Id
+                                               select g).FirstOrDefault(),
+                                 Difficulty = (from d in context.Difficulties
+                                               where q.DifficultyLevelId == d.Id
+                                               select d).FirstOrDefault(),
+                                 Lesson = (from l in context.Lessons
+                                           where q.LessonId == l.Id
+                                           select l).FirstOrDefault(),
+                                 Subject = (from s in context.Subjects
+                                            where q.SubjectId == s.Id
+                                            select s).FirstOrDefault()
                              };
 
 

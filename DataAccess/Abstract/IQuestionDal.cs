@@ -15,6 +15,6 @@ namespace DataAccess.Abstract
         QuestionDetailsDto GetQuestionDetailsById(int questionId);
         List<QuestionDetailsDto> GetDetailsByQuestionText(string text);
         List<QuestionDetailsDto> GetQuestionDetailsByUser(int userId);
-
+        List<QuestionDetailsDto> GetAllDetailsBySubjects(params int[] subjects);
     }
 }

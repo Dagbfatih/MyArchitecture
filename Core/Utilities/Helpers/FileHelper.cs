@@ -1,62 +1,75 @@
-﻿using Core.Utilities.Results.Abstract;
+﻿using Core.Entities.Concrete;
+using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Core.Utilities.Helpers
 {
     public class FileHelper
     {
-        public static string Add(IFormFile file)
+
+        private PathInfo CreateFullPath(IFormFile formFile, string uploadedDirectory)
         {
-            var result = NewPath(file);
-
-            var sourcepath = Path.GetTempFileName();
-
-            using (var stream = new FileStream(sourcepath, FileMode.Create))
+            if (!Directory.Exists(uploadedDirectory))
             {
-                file.CopyTo(stream);
+                Directory.CreateDirectory(uploadedDirectory);
             }
 
-            File.Move(sourcepath, result.newPath);
+            string fileName = CreateGuidFileName(uploadedDirectory, Path.GetExtension(formFile.FileName));
+            string fullPath = Path.Combine(uploadedDirectory, fileName);
 
-            return result.Path2;
+            return new PathInfo { FileName = fileName, FullPath = fullPath };
         }
 
-        public static string Update(string sourcePath, IFormFile file)
+        public async Task<string> Add(IFormFile formFile, string uploadedDirectory, string uploadedFolderName)
         {
-            var result = NewPath(file);
-            using (var stream = new FileStream(result.newPath, FileMode.Create))
+            var fullPathInfo = CreateFullPath(formFile, uploadedDirectory);
+            using (var stream = new FileStream(fullPathInfo.FullPath, FileMode.Create, FileAccess.Write, FileShare.None,
+                bufferSize: 4096, useAsync: true))
             {
-                file.CopyTo(stream);
+                await formFile.CopyToAsync(stream);
+                await stream.FlushAsync();
             }
 
-            File.Delete(sourcePath);
-
-            return result.Path2;
+            return $"/{uploadedFolderName}/{fullPathInfo.FileName}";
         }
 
-        public static IResult Delete(string path)
+        public Task<string> Update(IFormFile formFile, string uploadedDirectory, string uploadedFolderName, string oldPath)
         {
-            File.Delete(path);
-            return new SuccessResult();
+            File.Delete(oldPath);
+            return Add(formFile, uploadedDirectory, uploadedFolderName);
         }
 
-        public static (string newPath, string Path2) NewPath(IFormFile file)
+        private string CreateGuidFileName(string uploadedDirectory, string fileExtension)
         {
-            FileInfo ff = new FileInfo(file.FileName);
-            string fileExtension = ff.Extension;
+            string fileName;
+            string fullPath;
 
-            var newPath = Guid.NewGuid() + fileExtension;
+            //checking file name if exists create repeatedly
+            do
+            {
+                fileName = $@"{Guid.NewGuid()}{fileExtension}";
+                fullPath = Path.Combine(uploadedDirectory, fileName);
+            } while (File.Exists(fullPath));
 
-            string path = Environment.CurrentDirectory + @"\wwwroot\Images";
+            return fileName;
+        }
 
-            string result = $@"{path}\{newPath}";
+        public string GetDefaultImageByFileName(string fileName)
+        {
+            var defaultPath = "/DefaultImages/" + fileName;
+            return defaultPath;
+        }
 
-            return (result, $"\\Images\\{newPath}");
+        public void Delete(string oldPath)
+        {
+            File.Delete(oldPath);
         }
     }
 }

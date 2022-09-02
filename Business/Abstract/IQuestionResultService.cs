@@ -1,4 +1,5 @@
-﻿using Core.Utilities.Results.Abstract;
+﻿using Core.Business;
+using Core.Utilities.Results.Abstract;
 using Entities.Concrete;
 using Entities.Dtos;
 using System;
@@ -7,7 +8,7 @@ using System.Text;
 
 namespace Business.Abstract
 {
-    public interface IQuestionResultService:IBusinessService<QuestionResult>
+    public interface IQuestionResultService: IBusinessServiceRepository<QuestionResult>
     {
         IDataResult<List<QuestionResultDetailsDto>> GetAllDetails();
         IDataResult<List<QuestionResultDetailsDto>> GetAllDetailsByTestResultId(int testResultId);

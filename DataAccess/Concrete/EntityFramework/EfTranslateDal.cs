@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using Core.Utilities.Results.Abstract;
 using System.Linq;
-using Entities.Dtos;
+using Core.Entities.Dtos;
 
 namespace DataAccess.Concrete.EntityFramework
 {

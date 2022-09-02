@@ -11,23 +11,12 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UsersController : ControllerRepositoryBase<User>
     {
         IUserService _userService;
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService) : base(userService)
         {
             _userService = userService;
-        }
-
-        [HttpGet("getall")]
-        public IActionResult GetAll()
-        {
-            var result = _userService.GetAll();
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
         }
 
         [HttpGet("getbymail")]
@@ -62,34 +51,12 @@ namespace WebAPI.Controllers
                 return Ok(result);
             }
             return BadRequest(result);
-        }
-
-        [HttpPost("update")]
-        public IActionResult Update(User user)
-        {
-            var result = _userService.Update(user);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
+        }   
 
         [HttpPost("updatewithoutpassword")]
         public IActionResult UpdateWithoutPassword(User user)
         {
             var result = _userService.UpdateWithoutPassword(user);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpDelete("delete")]
-        public IActionResult Delete(User user)
-        {
-            var result = _userService.Delete(user);
             if (result.Success)
             {
                 return Ok(result);

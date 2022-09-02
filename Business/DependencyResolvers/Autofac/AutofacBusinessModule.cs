@@ -65,6 +65,18 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<EfSubjectDal>().As<ISubjectDal>();
             builder.RegisterType<RefreshTokenManager>().As<IRefreshTokenService>();
             builder.RegisterType<EfRefreshTokenDal>().As<IRefreshTokenDal>();
+            builder.RegisterType<CityManager>().As<ICityService>();
+            builder.RegisterType<EfCityDal>().As<ICityDal>();
+            builder.RegisterType<ProfileInfoManager>().As<IProfileInfoService>();
+            builder.RegisterType<EfProfileInfoDal>().As<IProfileInfoDal>();
+            builder.RegisterType<ProfileInfoWebsiteManager>().As<IProfileInfoWebsiteService>();
+            builder.RegisterType<EfProfileInfoWebsiteDal>().As<IProfileInfoWebsiteDal>();
+            builder.RegisterType<SchoolManager>().As<ISchoolService>();
+            builder.RegisterType<EfSchoolDal>().As<ISchoolDal>();
+            builder.RegisterType<WebsiteManager>().As<IWebsiteService>();
+            builder.RegisterType<EfWebsiteDal>().As<IWebsiteDal>();
+            builder.RegisterType<DifficultyManager>().As<IDifficultyService>();
+            builder.RegisterType<EfDifficultyDal>().As<IDifficultyDal>();
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 

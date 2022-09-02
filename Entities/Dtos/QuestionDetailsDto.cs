@@ -10,6 +10,10 @@ namespace Entities.Dtos
     {
         public Question Question { get; set; }
         public List<Option> Options { get; set; }
+        public GradeLevel GradeLevel { get; set; }
+        public Difficulty Difficulty { get; set; }
+        public Lesson Lesson { get; set; }
+        public Subject Subject { get; set; }
         public string UserName { get; set; }
     }
 }

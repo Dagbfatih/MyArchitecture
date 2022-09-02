@@ -7,6 +7,7 @@ using Core.Aspects.Autofac.Transaction;
 using Core.Aspects.Autofac.Validation;
 using Core.Business;
 using Core.Entities.Concrete;
+using Core.Entities.Dtos;
 using Core.Utilities.Helpers;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
@@ -23,12 +24,12 @@ namespace Business.Concrete
 {
     public class AuthManager : BusinessMessagesService, IAuthService
     {
-        private IUserService _userService;
-        private ITokenHelper _tokenHelper;
-        private ICustomerService _customerService;
-        private IUserOperationClaimService _userOperationClaimService;
-        private IOperationClaimService _operationClaimService;
-        private IRefreshTokenService _refreshTokenService;
+        private readonly IUserService _userService;
+        private readonly ITokenHelper _tokenHelper;
+        private readonly ICustomerService _customerService;
+        private readonly IUserOperationClaimService _userOperationClaimService;
+        private readonly IOperationClaimService _operationClaimService;
+        private readonly IRefreshTokenService _refreshTokenService;
 
         public AuthManager(
             IUserService userService,
@@ -152,27 +153,23 @@ namespace Business.Concrete
             {
                 new UserOperationClaim
                 {
-                    OperationClaimId = existClaims.FirstOrDefault(c => c.Name == "user").Id,
+                    OperationClaimId = existClaims.FirstOrDefault(c => c.Name.ToLower() == "user".ToLower()).Id,
                     UserId = customer.Customer.UserId
                 }
             };
 
-            if (customer.Customer.RoleId == 1)
+
+            claims.Add(new UserOperationClaim
             {
-                claims.Add(new UserOperationClaim
-                {
-                    OperationClaimId = existClaims.FirstOrDefault(c => c.Name == "student").Id,
-                    UserId = customer.Customer.UserId
-                });
-            }
-            else
+                OperationClaimId = existClaims.FirstOrDefault(c => c.Name == "student").Id,
+                UserId = customer.Customer.UserId
+            });
+
+            claims.Add(new UserOperationClaim
             {
-                claims.Add(new UserOperationClaim
-                {
-                    OperationClaimId = existClaims.FirstOrDefault(c => c.Name == "notConfirmedInstructor").Id,
-                    UserId = customer.Customer.UserId
-                });
-            }
+                OperationClaimId = existClaims.FirstOrDefault(c => c.Name == "notConfirmedInstructor").Id,
+                UserId = customer.Customer.UserId
+            });
 
             _userOperationClaimService.AddClaims(claims);
         }

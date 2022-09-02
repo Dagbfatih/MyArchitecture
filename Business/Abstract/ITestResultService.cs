@@ -1,11 +1,12 @@
-﻿using Core.Utilities.Results.Abstract;
+﻿using Core.Business;
+using Core.Utilities.Results.Abstract;
 using Entities.Concrete;
 using Entities.Dtos;
 using System.Collections.Generic;
 
 namespace Business.Abstract
 {
-    public interface ITestResultService:IBusinessService<TestResult>
+    public interface ITestResultService : IBusinessServiceRepository<TestResult>
     {
         IDataResult<List<TestResultDetailsDto>> GetAllDetails();
         IDataResult<List<TestResultDetailsDto>> GetAllDetailsByUser(int userId);

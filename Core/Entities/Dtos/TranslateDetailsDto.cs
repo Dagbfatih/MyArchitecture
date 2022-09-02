@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Entities.Dtos
+namespace Core.Entities.Dtos
 {
     public class TranslateDetailsDto : IDto
     {

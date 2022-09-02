@@ -15,7 +15,10 @@ namespace Entities.Concrete
         public int UserId { get; set; }
         public int LessonId { get; set; }
         public int SubjectId { get; set; }
-        public int DifficultyLevel { get; set; }
+        public int GradeLevelId { get; set; }
+        public int DifficultyLevelId { get; set; }
+        public DateTime Date { get; set; }
+        public string Stem { get; set; }
 
     }
 }

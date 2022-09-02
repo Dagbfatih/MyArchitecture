@@ -11,57 +11,13 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GradeLevelsController : ControllerBase
+    public class GradeLevelsController : ControllerRepositoryBase<GradeLevel>
     {
         private readonly IGradeLevelService _gradeLevelService;
 
-        public GradeLevelsController(IGradeLevelService gradeLevelService)
+        public GradeLevelsController(IGradeLevelService gradeLevelService) : base(gradeLevelService)
         {
             _gradeLevelService = gradeLevelService;
-        }
-
-        [HttpPost("add")]
-        public IActionResult Add(GradeLevel gradeLevel)
-        {
-            var result = _gradeLevelService.Add(gradeLevel);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpPut("update")]
-        public IActionResult Update(GradeLevel gradeLevel)
-        {
-            var result = _gradeLevelService.Update(gradeLevel);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpGet("getall")]
-        public IActionResult GetAll()
-        {
-            var result = _gradeLevelService.GetAll();
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpDelete("delete")]
-        public IActionResult Delete(GradeLevel gradeLevel)
-        {
-            var result = _gradeLevelService.Delete(gradeLevel);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
         }
     }
 }

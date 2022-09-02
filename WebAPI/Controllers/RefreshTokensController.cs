@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Business.Abstract;
+using Core.Entities.Concrete;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,7 +11,12 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RefreshTokensController : ControllerBase
+    public class RefreshTokensController : ControllerRepositoryBase<RefreshToken>
     {
+        private IRefreshTokenService _refreshTokenService;
+        public RefreshTokensController(IRefreshTokenService refreshTokenService) : base(refreshTokenService)
+        {
+            _refreshTokenService = refreshTokenService;
+        }
     }
 }

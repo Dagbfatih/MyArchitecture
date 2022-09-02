@@ -67,8 +67,6 @@ namespace WebAPI
 
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Swagger Api V1"));
 
-            //app.ConfigureCustomRefreshTokenMiddleware();
-
             app.ConfigureCustomTokenMiddleware();
 
             app.ConfigureCustomTranslateMiddleware();
@@ -78,8 +76,7 @@ namespace WebAPI
             app.UseEndpoints(endpoints =>
             {
                 endpoints
-                .MapControllers()
-                .RequireAuthorization();
+                .MapControllers();
             });
 
         }

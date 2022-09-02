@@ -12,52 +12,19 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TestResultsController : ControllerBase
+    public class TestResultsController : ControllerRepositoryBase<TestResult>
     {
         private readonly ITestResultService _testResultService;
 
-        public TestResultsController(ITestResultService testResultService)
+        public TestResultsController(ITestResultService testResultService) : base(testResultService)
         {
             _testResultService = testResultService;
-        }
-
-        [HttpPost("add")]
-        public IActionResult Add(TestResult testResult)
-        {
-            var result = _testResultService.Add(testResult);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
         }
 
         [HttpPost("addwithdetails")]
         public IActionResult AddWithDetails(TestResultDetailsDto testResult)
         {
             var result = _testResultService.AddWithDetails(testResult);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpPost("update")]
-        public IActionResult Update(TestResult testResult)
-        {
-            var result = _testResultService.Update(testResult);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpGet("getall")]
-        public IActionResult GetAll()
-        {
-            var result = _testResultService.GetAll();
             if (result.Success)
             {
                 return Ok(result);

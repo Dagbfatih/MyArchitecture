@@ -11,45 +11,13 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserOperationClaimsController : ControllerBase
+    public class UserOperationClaimsController : ControllerRepositoryBase<UserOperationClaim>
     {
         IUserOperationClaimService _userOperationClaimService;
         public UserOperationClaimsController(IUserOperationClaimService userOperationClaimService)
+            : base(userOperationClaimService)
         {
             _userOperationClaimService = userOperationClaimService;
-        }
-
-        [HttpPost("add")]
-        public IActionResult Add(UserOperationClaim userOperationClaim)
-        {
-            var result = _userOperationClaimService.Add(userOperationClaim);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpPost("update")]
-        public IActionResult Update(UserOperationClaim userOperationClaim)
-        {
-            var result = _userOperationClaimService.Update(userOperationClaim);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpGet("getall")]
-        public IActionResult GetAll()
-        {
-            var result = _userOperationClaimService.GetAll();
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
         }
 
         [HttpGet("getalldetails")]
@@ -67,17 +35,6 @@ namespace WebAPI.Controllers
         public IActionResult GetAllDetailsByUser(int userId)
         {
             var result = _userOperationClaimService.GetAllDetailsByUser(userId);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpDelete("delete")]
-        public IActionResult Delete(UserOperationClaim userOperationClaim)
-        {
-            var result = _userOperationClaimService.Delete(userOperationClaim);
             if (result.Success)
             {
                 return Ok(result);

@@ -1,8 +1,9 @@
-﻿using Entities.Concrete;
+﻿using Core.Business;
+using Entities.Concrete;
 
 namespace Business.Abstract
 {
-    public interface IRoleService : IBusinessService<Role>
+    public interface IRoleService : IBusinessServiceRepository<Role>
     {
     }
 }

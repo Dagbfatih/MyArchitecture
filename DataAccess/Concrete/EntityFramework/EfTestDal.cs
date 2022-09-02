@@ -42,8 +42,20 @@ namespace DataAccess.Concrete.EntityFramework
                                                                  QuestionId = o.QuestionId,
                                                                  OptionText = o.OptionText,
                                                                  Accuracy = o.Accuracy
-                                                             }).ToList()
+                                                             }).ToList(),
+                                                  GradeLevel = (from g in context.GradeLevels
+                                                                where q.GradeLevelId == g.Id
+                                                                select g).FirstOrDefault(),
+                                                  Difficulty = (from d in context.Difficulties
+                                                                where q.DifficultyLevelId == d.Id
+                                                                select d).FirstOrDefault()
                                               }).ToList(),
+                                 GradeLevel = (from g in context.GradeLevels
+                                               where t.GradeLevelId == g.Id
+                                               select g).FirstOrDefault(),
+                                 Difficulty = (from d in context.Difficulties
+                                               where t.DifficultyLevelId == d.Id
+                                               select d).FirstOrDefault()
                              };
 
                 return result.ToList();
@@ -82,8 +94,20 @@ namespace DataAccess.Concrete.EntityFramework
                                                                  QuestionId = o.QuestionId,
                                                                  OptionText = o.OptionText,
                                                                  Accuracy = o.Accuracy
-                                                             }).ToList()
+                                                             }).ToList(),
+                                                  GradeLevel = (from g in context.GradeLevels
+                                                                where q.GradeLevelId == g.Id
+                                                                select g).FirstOrDefault(),
+                                                  Difficulty = (from d in context.Difficulties
+                                                                where q.DifficultyLevelId == d.Id
+                                                                select d).FirstOrDefault()
                                               }).ToList(),
+                                 GradeLevel = (from g in context.GradeLevels
+                                               where t.GradeLevelId == g.Id
+                                               select g).FirstOrDefault(),
+                                 Difficulty = (from d in context.Difficulties
+                                               where t.DifficultyLevelId == d.Id
+                                               select d).FirstOrDefault()
                              };
 
                 return result.FirstOrDefault();
@@ -122,8 +146,20 @@ namespace DataAccess.Concrete.EntityFramework
                                                                  QuestionId = o.QuestionId,
                                                                  OptionText = o.OptionText,
                                                                  Accuracy = o.Accuracy
-                                                             }).ToList()
+                                                             }).ToList(),
+                                                  GradeLevel = (from g in context.GradeLevels
+                                                                where q.GradeLevelId == g.Id
+                                                                select g).FirstOrDefault(),
+                                                  Difficulty = (from d in context.Difficulties
+                                                                where q.DifficultyLevelId == d.Id
+                                                                select d).FirstOrDefault()
                                               }).ToList(),
+                                 GradeLevel = (from g in context.GradeLevels
+                                               where t.GradeLevelId == g.Id
+                                               select g).FirstOrDefault(),
+                                 Difficulty = (from d in context.Difficulties
+                                               where t.DifficultyLevelId == d.Id
+                                               select d).FirstOrDefault()
                              };
 
                 return result.ToList();

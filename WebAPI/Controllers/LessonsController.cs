@@ -1,5 +1,6 @@
 ﻿using Business.Abstract;
 using Entities.Concrete;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -11,56 +12,21 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LessonsController : ControllerBase
+    public class LessonsController : ControllerRepositoryBase<Lesson>
     {
         private readonly ILessonService _lessonService;
 
-        public LessonsController(ILessonService lessonService)
+        public LessonsController(ILessonService lessonService) : base(lessonService)
         {
             _lessonService = lessonService;
         }
 
-        [HttpPost("add")]
-        public IActionResult Add(Lesson lesson)
+        [HttpGet("[action]")]
+        public IActionResult GetAllByGradeLevel(int gradeLevelId)
         {
-            var result = _lessonService.Add(lesson);
+            var result = _lessonService.GetAllByGradeLevel(gradeLevelId);
             if (result.Success)
-            {
                 return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpPut("update")]
-        public IActionResult Update(Lesson lesson)
-        {
-            var result = _lessonService.Update(lesson);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpGet("getall")]
-        public IActionResult GetAll()
-        {
-            var result = _lessonService.GetAll();
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-        }
-
-        [HttpDelete("delete")]
-        public IActionResult Delete(Lesson lesson)
-        {
-            var result = _lessonService.Delete(lesson);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
             return BadRequest(result);
         }
     }

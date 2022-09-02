@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.Services;
 using Core.Utilities.Results.Abstract;
 using Core.Utilities.Results.Concrete;
@@ -19,12 +20,14 @@ namespace Business.Concrete
             _gradeLevelDal = gradeLevelDal;
         }
 
+        [SecuredOperation("admin")]
         public IResult Add(GradeLevel entity)
         {
             _gradeLevelDal.Add(entity);
             return new SuccessResult(_messages.GradeLevelAdded);
         }
 
+        [SecuredOperation("admin")]
         public IResult Delete(GradeLevel entity)
         {
             _gradeLevelDal.Delete(entity);
@@ -41,6 +44,7 @@ namespace Business.Concrete
             return new SuccessDataResult<List<GradeLevel>>(_gradeLevelDal.GetAll());
         }
 
+        [SecuredOperation("admin")]
         public IResult Update(GradeLevel entity)
         {
             _gradeLevelDal.Update(entity);

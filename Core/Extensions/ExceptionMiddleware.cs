@@ -53,12 +53,12 @@ namespace Core.Extensions
             }
             else if (e.GetType() == typeof(UnauthorizedAccessException))
             {
-                _errorDetails = new DefaultErrorDetails(HttpStatusCode.BadRequest, e.Message);
+                _errorDetails = new DefaultErrorDetails(HttpStatusCode.Unauthorized, e.Message);
                 httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             }
             else if (e.GetType() == typeof(SecurityException))
             {
-                _errorDetails = new DefaultErrorDetails(HttpStatusCode.BadRequest, e.Message);
+                _errorDetails = new DefaultErrorDetails(HttpStatusCode.Unauthorized, e.Message);
                 httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             }
             else if (e.GetType()== typeof(SecurityTokenExpiredException))
@@ -71,6 +71,7 @@ namespace Core.Extensions
                 _errorDetails = new DefaultErrorDetails(HttpStatusCode.InternalServerError,
                     _coreMessages.InternalServerError);
             }
+            httpContext.Response.StatusCode = (int)_errorDetails.StatusCode;
 
             await httpContext.Response.WriteAsync(_errorDetails.ToString());
         }

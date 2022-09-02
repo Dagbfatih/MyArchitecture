@@ -208,7 +208,7 @@ namespace Business.Concrete
 
         }
 
-        [CacheAspect(duration: 10)]
+        //[CacheAspect(duration: 10)]
         [PerformanceAspect(10)]
         public IDataResult<List<QuestionDetailsDto>> GetAllDetailsByPublic()
         {
@@ -219,6 +219,22 @@ namespace Business.Concrete
         public IDataResult<List<QuestionDetailsDto>> GetDetailsByUser(int userId)
         {
             return new SuccessDataResult<List<QuestionDetailsDto>>(_questionDal.GetQuestionDetailsByUser(userId));
+        }
+
+        [CacheAspect(duration: 10)]
+        public IDataResult<List<QuestionDetailsDto>> GetAllDetailsBySubjectsAndPublic(params int[] subjects)
+        {
+            return new SuccessDataResult<List<QuestionDetailsDto>>(_questionDal.GetAllDetailsBySubjects(subjects));
+        }
+
+        [TransactionScopeAspect]
+        [SecuredOperation("user, instructor")]
+        [CacheRemoveAspect("IQuestionService.Get")]
+        public IResult DeleteWithDetails(QuestionDetailsDto question)
+        {
+            _questionDal.Delete(question.Question);
+            DeleteRelations(question.Question);
+            return new SuccessResult(_messages.QuestionDeleted);
         }
     }
 }

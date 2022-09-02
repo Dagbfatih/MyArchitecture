@@ -1,8 +1,9 @@
-﻿using Entities.Concrete;
+﻿using Core.Business;
+using Entities.Concrete;
 
 namespace Business.Abstract
 {
-    public interface IGradeLevelService : IBusinessService<GradeLevel>
+    public interface IGradeLevelService : IBusinessServiceRepository<GradeLevel>
     {
     }
 }

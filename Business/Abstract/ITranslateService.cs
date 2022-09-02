@@ -1,13 +1,14 @@
-﻿using Core.Entities.Concrete;
+﻿using Core.Business;
+using Core.Entities.Concrete;
 using Core.Utilities.Results.Abstract;
-using Entities.Dtos;
+using Core.Entities.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Business.Abstract
 {
-    public interface ITranslateService : IBusinessService<Translate>
+    public interface ITranslateService : IBusinessServiceRepository<Translate>
     {
         IDataResult<List<TranslateDetailsDto>> GetAllDetails();
         IDataResult<List<TranslateDetailsDto>> GetAllDetailsByLanguage(int languageId);
